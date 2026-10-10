@@ -1,7 +1,7 @@
 """Test the GoodWe switch platform."""
 
 from datetime import timedelta
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from freezegun.api import FrozenDateTimeFactory
 from goodwe import InverterError, WorkModeSwitch
@@ -20,8 +20,6 @@ from homeassistant.components.switch import (
 )
 from homeassistant.const import (
     ATTR_ENTITY_ID,
-    CONF_HOST,
-    CONF_PORT,
     STATE_OFF,
     STATE_ON,
     STATE_UNAVAILABLE,
@@ -31,44 +29,20 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.goodwe_local import CONF_MODEL_FAMILY, DOMAIN
-
-from .conftest import TEST_HOST, TEST_PORT
+from .conftest import setup_integration
 
 TOU_ENTITY_ID = "switch.mock_title_tou_mode"
 PEAK_SHAVING_ENTITY_ID = "switch.mock_title_peak_shaving_mode"
 
 
-@pytest.fixture(name="config_entry")
-def fixture_config_entry() -> MockConfigEntry:
-    """Return a GoodWe config entry."""
-    return MockConfigEntry(
-        version=2,
-        domain=DOMAIN,
-        data={CONF_HOST: TEST_HOST, CONF_PORT: TEST_PORT, CONF_MODEL_FAMILY: "ET"},
-    )
-
-
-@pytest.fixture(name="mock_switches")
-def fixture_mock_switches(mock_inverter: MagicMock) -> MagicMock:
-    """Give the inverter work mode 3.0 switches with TOU on."""
-    switches = {
-        WorkModeSwitch.BACKUP: False,
-        WorkModeSwitch.TOU: True,
-        WorkModeSwitch.SMART_CHARGE: False,
-        WorkModeSwitch.PEAK_SHAVING: False,
-    }
-    mock_inverter.get_work_mode_switches.return_value = switches
-    # Home Assistant reads the switches back after changing one
-    mock_inverter.set_work_mode_switch.side_effect = switches.__setitem__
-    return mock_inverter
+@pytest.fixture
+def allow_control() -> bool:
+    """Switches exist only with controls allowed."""
+    return True
 
 
 async def _setup(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:
-    config_entry.add_to_hass(hass)
-    with patch("custom_components.goodwe_local.PLATFORMS", [Platform.SWITCH]):
-        assert await hass.config_entries.async_setup(config_entry.entry_id)
-        await hass.async_block_till_done()
+    await setup_integration(hass, config_entry, [Platform.SWITCH])
 
 
 @pytest.mark.usefixtures("mock_switches")

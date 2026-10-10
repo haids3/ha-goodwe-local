@@ -13,6 +13,13 @@ bit and NUL-padded model names.
 
 ## Differences from the built-in integration
 
+- **Controls are off by default.** Settings (export limit, depth of
+  discharge, operation mode or work modes) are shown read-only. Turning on
+  *Allow controls* in the integration's options adds the entities that write
+  to the inverter, and the read-only ones stay, so nothing is removed when
+  controls are switched on or off.
+- Settings are read every 5 minutes, so changes made in the GoodWe apps show
+  up in Home Assistant.
 - Zeroconf discovery of GoodWe WiFi/LAN dongles (`_goodwe._tcp`).
 - Work mode 3.0 firmware gets one switch per work mode (backup, TOU, smart
   charge, peak shaving) instead of the operation-mode select.

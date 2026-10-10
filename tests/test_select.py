@@ -1,20 +1,29 @@
 """Test the GoodWe select platform."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from goodwe import InverterError, OperationMode, WorkModeSwitch
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from homeassistant.components.select import DOMAIN as SELECT_DOMAIN
-from homeassistant.const import CONF_HOST, CONF_PORT, Platform
+from homeassistant.components.select import (
+    ATTR_OPTION,
+    ATTR_OPTIONS,
+    DOMAIN as SELECT_DOMAIN,
+    SERVICE_SELECT_OPTION,
+)
+from homeassistant.const import ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant
 
-from custom_components.goodwe_local import CONF_MODEL_FAMILY, DOMAIN
-
-from .conftest import TEST_HOST, TEST_PORT
+from .conftest import setup_integration
 
 ENTITY_ID = "select.mock_title_inverter_operation_mode"
+
+
+@pytest.fixture
+def allow_control() -> bool:
+    """Selects exist only with controls allowed."""
+    return True
 
 
 @pytest.mark.parametrize(
@@ -30,25 +39,36 @@ ENTITY_ID = "select.mock_title_inverter_operation_mode"
 async def test_operation_mode_replaced_by_switches(
     hass: HomeAssistant,
     mock_inverter: MagicMock,
+    config_entry: MockConfigEntry,
     get_switches: dict,
     expected_entities: list[str],
 ) -> None:
     """Test the operation mode select is only added without work mode switches."""
     mock_inverter.get_work_mode_switches.configure_mock(**get_switches)
-    mock_inverter.get_operation_modes.return_value = (
-        OperationMode.GENERAL,
-        OperationMode.ECO,
-    )
-    mock_inverter.get_operation_mode.return_value = OperationMode.GENERAL
-    config_entry = MockConfigEntry(
-        version=2,
-        domain=DOMAIN,
-        data={CONF_HOST: TEST_HOST, CONF_PORT: TEST_PORT, CONF_MODEL_FAMILY: "ET"},
-    )
-    config_entry.add_to_hass(hass)
 
-    with patch("custom_components.goodwe_local.PLATFORMS", [Platform.SELECT]):
-        assert await hass.config_entries.async_setup(config_entry.entry_id)
-        await hass.async_block_till_done()
+    await setup_integration(hass, config_entry, [Platform.SELECT])
 
     assert hass.states.async_entity_ids(SELECT_DOMAIN) == expected_entities
+
+
+async def test_select_option(
+    hass: HomeAssistant,
+    mock_inverter: MagicMock,
+    config_entry: MockConfigEntry,
+) -> None:
+    """Test selecting a mode writes it and shows the mode read back."""
+    await setup_integration(hass, config_entry, [Platform.SELECT])
+    state = hass.states.get(ENTITY_ID)
+    assert state.state == "general"
+    assert state.attributes[ATTR_OPTIONS] == ["general", "eco"]
+    mock_inverter.get_operation_mode.return_value = OperationMode.ECO
+
+    await hass.services.async_call(
+        SELECT_DOMAIN,
+        SERVICE_SELECT_OPTION,
+        {ATTR_ENTITY_ID: ENTITY_ID, ATTR_OPTION: "eco"},
+        blocking=True,
+    )
+
+    mock_inverter.set_operation_mode.assert_awaited_once_with(OperationMode.ECO)
+    assert hass.states.get(ENTITY_ID).state == "eco"

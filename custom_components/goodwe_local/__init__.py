@@ -9,8 +9,13 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from .config_flow import GoodweFlowHandler
-from .const import CONF_MODEL_FAMILY, DOMAIN, PLATFORMS
-from .coordinator import GoodweConfigEntry, GoodweRuntimeData, GoodweUpdateCoordinator
+from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, DOMAIN, PLATFORMS
+from .coordinator import (
+    GoodweConfigEntry,
+    GoodweRuntimeData,
+    GoodweSettingsCoordinator,
+    GoodweUpdateCoordinator,
+)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bool:
@@ -47,11 +52,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
 
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_config_entry_first_refresh()
+    settings = GoodweSettingsCoordinator(hass, entry, inverter)
+    await settings.async_config_entry_first_refresh()
 
     entry.runtime_data = GoodweRuntimeData(
         inverter=inverter,
         coordinator=coordinator,
+        settings=settings,
         device_info=device_info,
+        # Controls write to real hardware, so they are opt-in
+        allow_control=entry.options.get(CONF_ALLOW_CONTROL, False),
     )
 
     entry.async_on_unload(entry.add_update_listener(update_listener))

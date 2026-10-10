@@ -1,0 +1,133 @@
+# serializer version: 1
+# name: test_entities[operation_mode-controls]
+  dict({
+    'button.mock_title_synchronize_inverter_clock': tuple(
+      'unknown',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'number.mock_title_depth_of_discharge_on_grid': tuple(
+      '50.0',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'number.mock_title_grid_export_limit': tuple(
+      '10000.0',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'select.mock_title_inverter_operation_mode': tuple(
+      'general',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'sensor.mock_title_depth_of_discharge_on_grid': tuple(
+      '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_grid_export_limit': tuple(
+      '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_inverter_operation_mode': tuple(
+      'general',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+  })
+# ---
+# name: test_entities[operation_mode-read_only]
+  dict({
+    'sensor.mock_title_depth_of_discharge_on_grid': tuple(
+      '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_grid_export_limit': tuple(
+      '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_inverter_operation_mode': tuple(
+      'general',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+  })
+# ---
+# name: test_entities[work_mode_switches-controls]
+  dict({
+    'binary_sensor.mock_title_backup_mode': tuple(
+      'on',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_peak_shaving_mode': tuple(
+      'off',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_smart_charge_mode': tuple(
+      'off',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_tou_mode': tuple(
+      'on',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'button.mock_title_synchronize_inverter_clock': tuple(
+      'unknown',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'number.mock_title_depth_of_discharge_on_grid': tuple(
+      '50.0',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'number.mock_title_grid_export_limit': tuple(
+      '10000.0',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'sensor.mock_title_depth_of_discharge_on_grid': tuple(
+      '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_grid_export_limit': tuple(
+      '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'switch.mock_title_backup_mode': tuple(
+      'on',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'switch.mock_title_peak_shaving_mode': tuple(
+      'off',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'switch.mock_title_smart_charge_mode': tuple(
+      'off',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+    'switch.mock_title_tou_mode': tuple(
+      'on',
+      <EntityCategory.CONFIG: 'config'>,
+    ),
+  })
+# ---
+# name: test_entities[work_mode_switches-read_only]
+  dict({
+    'binary_sensor.mock_title_backup_mode': tuple(
+      'on',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_peak_shaving_mode': tuple(
+      'off',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_smart_charge_mode': tuple(
+      'off',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'binary_sensor.mock_title_tou_mode': tuple(
+      'on',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_depth_of_discharge_on_grid': tuple(
+      '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_grid_export_limit': tuple(
+      '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+  })
+# ---

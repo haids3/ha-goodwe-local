@@ -18,6 +18,8 @@ from .coordinator import GoodweConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
+PARALLEL_UPDATES = 1
+
 
 @dataclass(frozen=True, kw_only=True)
 class GoodweButtonEntityDescription(ButtonEntityDescription):
@@ -42,6 +44,8 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the inverter button entities from a config entry."""
+    if not config_entry.runtime_data.allow_control:
+        return
     inverter = config_entry.runtime_data.inverter
     device_info = config_entry.runtime_data.device_info
 

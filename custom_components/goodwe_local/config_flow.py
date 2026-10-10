@@ -7,15 +7,27 @@ from goodwe import Inverter, InverterError, connect
 from goodwe.const import GOODWE_TCP_PORT, GOODWE_UDP_PORT
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.core import callback
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
-from .const import CONF_MODEL_FAMILY, DEFAULT_NAME, DOMAIN
+from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, DEFAULT_NAME, DOMAIN
 
 CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
+    }
+)
+
+OPTIONS_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_ALLOW_CONTROL, default=False): bool,
     }
 )
 
@@ -33,6 +45,12 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
     _discovered_host: str
     _discovered_port: int
     _discovered_inverter: Inverter
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> GoodweOptionsFlow:
+        """Get the options flow for this handler."""
+        return GoodweOptionsFlow()
 
     async def async_handle_successful_connection(
         self,
@@ -146,3 +164,20 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
             port = GOODWE_TCP_PORT
             inverter = await connect(host=host, port=port, retries=3)
         return inverter, port
+
+
+class GoodweOptionsFlow(OptionsFlow):
+    """Handle GoodWe options."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+        return self.async_show_form(
+            step_id="init",
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA, self.config_entry.options
+            ),
+        )

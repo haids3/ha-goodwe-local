@@ -1,37 +1,31 @@
 """GoodWe PV inverter selection settings entities."""
 
-import logging
 from typing import override
 
-from goodwe import Inverter, InverterError, OperationMode
+from goodwe import Inverter, OperationMode
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .coordinator import GoodweConfigEntry
+from .const import MODE_TO_OPTION
+from .coordinator import (
+    SETTING_OPERATION_MODE,
+    GoodweConfigEntry,
+    GoodweSettingsCoordinator,
+)
 
-_LOGGER = logging.getLogger(__name__)
-
-
-_MODE_TO_OPTION: dict[OperationMode, str] = {
-    OperationMode.GENERAL: "general",
-    OperationMode.OFF_GRID: "off_grid",
-    OperationMode.BACKUP: "backup",
-    OperationMode.ECO: "eco",
-    OperationMode.PEAK_SHAVING: "peak_shaving",
-    OperationMode.ECO_CHARGE: "eco_charge",
-    OperationMode.ECO_DISCHARGE: "eco_discharge",
-}
+PARALLEL_UPDATES = 1
 
 _OPTION_TO_MODE: dict[str, OperationMode] = {
-    value: key for key, value in _MODE_TO_OPTION.items()
+    value: key for key, value in MODE_TO_OPTION.items()
 }
 
 OPERATION_MODE = SelectEntityDescription(
-    key="operation_mode",
+    key=SETTING_OPERATION_MODE,
     entity_category=EntityCategory.CONFIG,
     translation_key="operation_mode",
 )
@@ -43,75 +37,55 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the inverter select entities from a config entry."""
-    inverter = config_entry.runtime_data.inverter
-    device_info = config_entry.runtime_data.device_info
-
-    try:
-        # Firmware with independent work mode switches gets switch entities instead
-        if await inverter.get_work_mode_switches():
-            return
-    except InverterError:
-        _LOGGER.debug("Could not read inverter work mode switches")
-
-    supported_modes = await inverter.get_operation_modes(False)
-    # read current operating mode from the inverter
-    try:
-        active_mode = await inverter.get_operation_mode()
-    except InverterError, ValueError:
-        # Inverter model does not support this setting
-        _LOGGER.debug("Could not read inverter operation mode")
-    else:
-        active_mode_option = _MODE_TO_OPTION.get(active_mode)
-        if active_mode_option is not None:
-            async_add_entities(
-                [
-                    InverterOperationModeEntity(
-                        device_info,
-                        OPERATION_MODE,
-                        inverter,
-                        [v for k, v in _MODE_TO_OPTION.items() if k in supported_modes],
-                        active_mode_option,
-                    )
-                ]
-            )
-        else:
-            _LOGGER.warning(
-                "Active mode %s not found in Goodwe Inverter Operation"
-                " Mode Entity. Skipping entity creation",
-                active_mode,
-            )
+    runtime_data = config_entry.runtime_data
+    settings = runtime_data.settings
+    if runtime_data.allow_control and SETTING_OPERATION_MODE in settings.supported:
+        async_add_entities(
+            [
+                InverterOperationModeEntity(
+                    settings,
+                    runtime_data.device_info,
+                    OPERATION_MODE,
+                    runtime_data.inverter,
+                )
+            ]
+        )
 
 
-class InverterOperationModeEntity(SelectEntity):
+class InverterOperationModeEntity(
+    CoordinatorEntity[GoodweSettingsCoordinator], SelectEntity
+):
     """Entity representing the inverter operation mode."""
 
-    _attr_should_poll = False
     _attr_has_entity_name = True
 
     def __init__(
         self,
+        coordinator: GoodweSettingsCoordinator,
         device_info: DeviceInfo,
         description: SelectEntityDescription,
         inverter: Inverter,
-        supported_options: list[str],
-        current_mode: str,
     ) -> None:
         """Initialize the inverter operation mode setting entity."""
+        super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{inverter.serial_number}-{description.key}"
         self._attr_device_info = device_info
-        self._attr_options = supported_options
-        self._attr_current_option = current_mode
-        self._inverter: Inverter = inverter
+        self._attr_options = [
+            option
+            for mode, option in MODE_TO_OPTION.items()
+            if mode in coordinator.operation_modes
+        ]
+        self._inverter = inverter
 
-    async def async_update(self) -> None:
-        """Get the current value from inverter."""
-        value = await self._inverter.get_operation_mode()
-        self._attr_current_option = _MODE_TO_OPTION[value]
+    @property
+    @override
+    def current_option(self) -> str | None:
+        """Return the active operation mode."""
+        return MODE_TO_OPTION.get(self.coordinator.data.get(SETTING_OPERATION_MODE))
 
     @override
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         await self._inverter.set_operation_mode(_OPTION_TO_MODE[option])
-        self._attr_current_option = option
-        self.async_write_ha_state()
+        await self.coordinator.async_request_refresh()

@@ -23,6 +23,20 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "work_mode_backup": {
+        "name": "Backup mode"
+      },
+      "work_mode_peak_shaving": {
+        "name": "Peak shaving mode"
+      },
+      "work_mode_smart_charge": {
+        "name": "Smart charge mode"
+      },
+      "work_mode_tou": {
+        "name": "TOU mode"
+      }
+    },
     "button": {
       "synchronize_clock": {
         "name": "Synchronize inverter clock"
@@ -37,6 +51,26 @@
       }
     },
     "select": {
+      "operation_mode": {
+        "name": "Inverter operation mode",
+        "state": {
+          "backup": "Backup mode",
+          "eco": "Eco mode",
+          "eco_charge": "Eco charge mode",
+          "eco_discharge": "Eco discharge mode",
+          "general": "General mode",
+          "off_grid": "Off-grid mode",
+          "peak_shaving": "Peak shaving mode"
+        }
+      }
+    },
+    "sensor": {
+      "battery_discharge_depth": {
+        "name": "Depth of discharge (on-grid)"
+      },
+      "grid_export_limit": {
+        "name": "Grid export limit"
+      },
       "operation_mode": {
         "name": "Inverter operation mode",
         "state": {
@@ -68,6 +102,19 @@
   "exceptions": {
     "work_mode_switch_rejected": {
       "message": "The inverter work mode could not be changed: {error}"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "allow_control": "Allow controls"
+        },
+        "data_description": {
+          "allow_control": "Create entities that change the inverter's settings: export limit, depth of discharge, work modes and the clock. Without this, the settings are shown read-only."
+        },
+        "title": "GoodWe options"
+      }
     }
   }
 }

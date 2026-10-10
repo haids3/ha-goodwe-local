@@ -36,7 +36,16 @@ from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from .coordinator import GoodweConfigEntry, GoodweUpdateCoordinator
+from .const import MODE_TO_OPTION
+from .coordinator import (
+    SETTING_BATTERY_DISCHARGE_DEPTH,
+    SETTING_GRID_EXPORT_LIMIT,
+    SETTING_OPERATION_MODE,
+    GoodweConfigEntry,
+    GoodweSettingsCoordinator,
+    GoodweUpdateCoordinator,
+    setting_unit,
+)
 
 # Coordinator handles all data updates, so parallel updates are not needed
 PARALLEL_UPDATES = 0
@@ -168,15 +177,46 @@ TEXT_SENSOR = GoodweSensorEntityDescription(
 )
 
 
+@dataclass(frozen=True, kw_only=True)
+class GoodweSettingSensorEntityDescription(SensorEntityDescription):
+    """Class describing a read-only view of an inverter setting."""
+
+    value: Callable[[Any], StateType] = lambda value: value
+
+
+SETTING_SENSORS = (
+    GoodweSettingSensorEntityDescription(
+        key=SETTING_GRID_EXPORT_LIMIT,
+        translation_key="grid_export_limit",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    GoodweSettingSensorEntityDescription(
+        key=SETTING_BATTERY_DISCHARGE_DEPTH,
+        translation_key="battery_discharge_depth",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        native_unit_of_measurement=PERCENTAGE,
+    ),
+    GoodweSettingSensorEntityDescription(
+        key=SETTING_OPERATION_MODE,
+        translation_key="operation_mode",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        device_class=SensorDeviceClass.ENUM,
+        options=list(MODE_TO_OPTION.values()),
+        value=MODE_TO_OPTION.get,
+    ),
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: GoodweConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the GoodWe inverter from a config entry."""
-    entities: list[InverterSensor] = []
+    entities: list[SensorEntity] = []
     inverter = config_entry.runtime_data.inverter
     coordinator = config_entry.runtime_data.coordinator
+    settings = config_entry.runtime_data.settings
     device_info = config_entry.runtime_data.device_info
 
     # Individual inverter sensors entities
@@ -184,6 +224,12 @@ async def async_setup_entry(
         InverterSensor(coordinator, device_info, inverter, sensor)
         for sensor in inverter.sensors()
         if not sensor.id_.startswith("xx")
+    )
+    # Settings show read-only whether or not controls are allowed
+    entities.extend(
+        InverterSettingSensor(settings, device_info, description, inverter)
+        for description in SETTING_SENSORS
+        if description.key in settings.supported
     )
 
     async_add_entities(entities)
@@ -281,3 +327,37 @@ class InverterSensor(CoordinatorEntity[GoodweUpdateCoordinator], SensorEntity):
         if self._sensor.id_ in DAILY_RESET and self._stop_reset is not None:
             self._stop_reset()
         await super().async_will_remove_from_hass()
+
+
+class InverterSettingSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
+    """Entity showing an inverter setting."""
+
+    _attr_has_entity_name = True
+    entity_description: GoodweSettingSensorEntityDescription
+
+    def __init__(
+        self,
+        coordinator: GoodweSettingsCoordinator,
+        device_info: DeviceInfo,
+        description: GoodweSettingSensorEntityDescription,
+        inverter: Inverter,
+    ) -> None:
+        """Initialize the setting sensor."""
+        super().__init__(coordinator)
+        self.entity_description = description
+        # Runtime sensors already use some setting keys, e.g. operation_mode
+        self._attr_unique_id = f"{inverter.serial_number}-setting_{description.key}"
+        self._attr_device_info = device_info
+        if description.key == SETTING_GRID_EXPORT_LIMIT:
+            if setting_unit(inverter, SETTING_GRID_EXPORT_LIMIT) == PERCENTAGE:
+                self._attr_native_unit_of_measurement = PERCENTAGE
+            else:
+                self._attr_device_class = SensorDeviceClass.POWER
+                self._attr_native_unit_of_measurement = UnitOfPower.WATT
+
+    @property
+    @override
+    def native_value(self) -> StateType:
+        """Return the setting's value."""
+        value = self.coordinator.data.get(self.entity_description.key)
+        return None if value is None else self.entity_description.value(value)
