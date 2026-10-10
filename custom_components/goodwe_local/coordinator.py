@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import SCAN_INTERVAL, SETTINGS_SCAN_INTERVAL
 from .entity import GoodweDevice
+from .tou import async_read_tou_slots
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,12 +104,14 @@ SETTING_GRID_EXPORT_LIMIT = "grid_export_limit"
 SETTING_BATTERY_DISCHARGE_DEPTH = "battery_discharge_depth"
 SETTING_WORK_MODE_SWITCHES = "work_mode_switches"
 SETTING_OPERATION_MODE = "operation_mode"
+SETTING_TOU_SLOTS = "tou_slots"
 
 _SETTINGS: dict[str, Callable[[Inverter], Awaitable[Any]]] = {
     SETTING_GRID_EXPORT_LIMIT: lambda inv: inv.get_grid_export_limit(),
     SETTING_BATTERY_DISCHARGE_DEPTH: lambda inv: inv.get_ongrid_battery_dod(),
     SETTING_WORK_MODE_SWITCHES: lambda inv: inv.get_work_mode_switches(),
     SETTING_OPERATION_MODE: lambda inv: inv.get_operation_mode(),
+    SETTING_TOU_SLOTS: async_read_tou_slots,
 }
 
 

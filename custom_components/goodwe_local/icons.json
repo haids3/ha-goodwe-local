@@ -68,6 +68,14 @@
       "status": {
         "default": "mdi:information-outline"
       },
+      "tou_slot_status": {
+        "default": "mdi:calendar-clock",
+        "state": {
+          "charge": "mdi:battery-arrow-up",
+          "discharge": "mdi:battery-arrow-down",
+          "off": "mdi:calendar-remove"
+        }
+      },
       "warnings": {
         "default": "mdi:alert-outline"
       }

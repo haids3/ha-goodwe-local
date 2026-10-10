@@ -448,6 +448,14 @@
       "test_status": {
         "name": "Test status"
       },
+      "tou_slot_status": {
+        "name": "TOU slot {slot} status",
+        "state": {
+          "charge": "Charge",
+          "discharge": "Discharge",
+          "off": "Off"
+        }
+      },
       "voltage": {
         "name": "Voltage"
       },

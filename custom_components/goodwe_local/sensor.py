@@ -42,12 +42,14 @@ from .coordinator import (
     SETTING_BATTERY_DISCHARGE_DEPTH,
     SETTING_GRID_EXPORT_LIMIT,
     SETTING_OPERATION_MODE,
+    SETTING_TOU_SLOTS,
     GoodweConfigEntry,
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
     setting_unit,
 )
 from .entity import GoodweDevice
+from .tou import TouSlot
 
 # Coordinator handles all data updates, so parallel updates are not needed
 PARALLEL_UPDATES = 0
@@ -228,6 +230,10 @@ async def async_setup_entry(
         for description in SETTING_SENSORS
         if description.key in settings.supported
     )
+    entities.extend(
+        TouSlotSensor(settings, devices[GoodweDevice.WORK_MODE], inverter, slot)
+        for slot in settings.data.get(SETTING_TOU_SLOTS, {}).values()
+    )
 
     async_add_entities(entities)
 
@@ -386,3 +392,64 @@ class InverterSettingSensor(CoordinatorEntity[GoodweSettingsCoordinator], Sensor
         """Return the setting's value."""
         value = self.coordinator.data.get(self.entity_description.key)
         return None if value is None else self.entity_description.value(value)
+
+
+class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
+    """A TOU slot at a glance: off, charge or discharge, with its schedule.
+
+    Read-only, so the schedule shows even when controls are off.
+    """
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "tou_slot_status"
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["off", "charge", "discharge"]
+
+    def __init__(
+        self,
+        coordinator: GoodweSettingsCoordinator,
+        device_info: DeviceInfo,
+        inverter: Inverter,
+        slot: TouSlot,
+    ) -> None:
+        """Initialize the TOU slot sensor."""
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{inverter.serial_number}-tou_slot_{slot.index}"
+        self._attr_device_info = device_info
+        self._attr_translation_placeholders = {"slot": str(slot.index)}
+        # Unused slots start disabled, as in the SEMS+ integration
+        self._attr_entity_registry_enabled_default = slot.configured
+        self._index = slot.index
+
+    @property
+    def _slot(self) -> TouSlot | None:
+        return self.coordinator.data.get(SETTING_TOU_SLOTS, {}).get(self._index)
+
+    @property
+    @override
+    def native_value(self) -> str | None:
+        """Return whether the slot charges, discharges or is off."""
+        if (slot := self._slot) is None:
+            return None
+        if not slot.enabled:
+            return "off"
+        return "charge" if slot.charging else "discharge"
+
+    @property
+    @override
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return the slot's schedule."""
+        if (slot := self._slot) is None:
+            return None
+        return {
+            "mode": "charge" if slot.charging else "discharge",
+            "start": slot.start,
+            "end": slot.end,
+            "power": slot.power,
+            "power_limit": None
+            if slot.charging
+            else ("export" if slot.export_limited else "battery"),
+            "cutoff_soc": slot.cutoff_soc,
+            "days": list(slot.days),
+            "months": list(slot.months),
+        }
