@@ -1,4 +1,224 @@
 # serializer version: 1
+# name: test_tou_slot_fields
+  dict({
+    'sensor.mock_title_work_mode_tou_slot_1_cutoff_soc': tuple(
+      '100',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_days': tuple(
+      'Every day',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_discharge_limit': tuple(
+      'unknown',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_end': tuple(
+      '15:00',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_mode': tuple(
+      'charge',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_months': tuple(
+      'All year',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_power': tuple(
+      '100',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_start': tuple(
+      '12:00',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_1_status': tuple(
+      'charge',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_cutoff_soc': tuple(
+      '50',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_days': tuple(
+      'Every day',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_discharge_limit': tuple(
+      'export',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_end': tuple(
+      '21:00',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_mode': tuple(
+      'discharge',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_months': tuple(
+      'All year',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_power': tuple(
+      '16',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_start': tuple(
+      '18:00',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_2_status': tuple(
+      'off',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_cutoff_soc': tuple(
+      None,
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_days': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_discharge_limit': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_end': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_mode': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_months': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_power': tuple(
+      None,
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_start': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_3_status': tuple(
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_cutoff_soc': tuple(
+      '30',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_days': tuple(
+      'Weekdays',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_discharge_limit': tuple(
+      'battery',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_end': tuple(
+      '20:45',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_mode': tuple(
+      'discharge',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_months': tuple(
+      'Jun, Jul, Aug',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_power': tuple(
+      '50',
+      '%',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_start': tuple(
+      '17:30',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_work_mode_tou_slot_4_status': tuple(
+      'discharge',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+  })
+# ---
 # name: test_tou_slots
   dict({
     'sensor.mock_title_work_mode_tou_slot_1_status': tuple(

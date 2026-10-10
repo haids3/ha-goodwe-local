@@ -50,6 +50,37 @@
       "status": {
         "default": "mdi:information-outline"
       },
+      "tou_slot_cutoff_soc": {
+        "default": "mdi:battery-lock"
+      },
+      "tou_slot_days": {
+        "default": "mdi:calendar-week"
+      },
+      "tou_slot_discharge_limit": {
+        "default": "mdi:transmission-tower-export",
+        "state": {
+          "battery": "mdi:battery-arrow-down"
+        }
+      },
+      "tou_slot_end": {
+        "default": "mdi:clock-end"
+      },
+      "tou_slot_mode": {
+        "default": "mdi:swap-vertical",
+        "state": {
+          "charge": "mdi:battery-arrow-up",
+          "discharge": "mdi:battery-arrow-down"
+        }
+      },
+      "tou_slot_months": {
+        "default": "mdi:calendar-month"
+      },
+      "tou_slot_power": {
+        "default": "mdi:flash"
+      },
+      "tou_slot_start": {
+        "default": "mdi:clock-start"
+      },
       "tou_slot_status": {
         "default": "mdi:calendar-clock",
         "state": {

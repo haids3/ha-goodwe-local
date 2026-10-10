@@ -421,6 +421,38 @@
       "test_status": {
         "name": "Test status"
       },
+      "tou_slot_cutoff_soc": {
+        "name": "TOU slot {slot} cutoff SOC"
+      },
+      "tou_slot_days": {
+        "name": "TOU slot {slot} days"
+      },
+      "tou_slot_discharge_limit": {
+        "name": "TOU slot {slot} discharge limit",
+        "state": {
+          "battery": "Battery discharge",
+          "export": "Export"
+        }
+      },
+      "tou_slot_end": {
+        "name": "TOU slot {slot} end"
+      },
+      "tou_slot_mode": {
+        "name": "TOU slot {slot} mode",
+        "state": {
+          "charge": "Charge",
+          "discharge": "Discharge"
+        }
+      },
+      "tou_slot_months": {
+        "name": "TOU slot {slot} months"
+      },
+      "tou_slot_power": {
+        "name": "TOU slot {slot} power"
+      },
+      "tou_slot_start": {
+        "name": "TOU slot {slot} start"
+      },
       "tou_slot_status": {
         "name": "TOU slot {slot} status",
         "state": {

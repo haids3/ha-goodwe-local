@@ -230,10 +230,15 @@ async def async_setup_entry(
         for description in SETTING_SENSORS
         if description.key in settings.supported
     )
-    entities.extend(
-        TouSlotSensor(settings, devices[GoodweDevice.WORK_MODE], inverter, slot)
-        for slot in settings.data.get(SETTING_TOU_SLOTS, {}).values()
-    )
+    for slot in settings.data.get(SETTING_TOU_SLOTS, {}).values():
+        device_info = devices[GoodweDevice.WORK_MODE]
+        entities.append(
+            TouSlotStatusSensor(settings, device_info, inverter, slot, TOU_SLOT_STATUS)
+        )
+        entities.extend(
+            TouSlotSensor(settings, device_info, inverter, slot, description)
+            for description in TOU_SLOT_FIELDS
+        )
 
     async_add_entities(entities)
 
@@ -394,16 +399,135 @@ class InverterSettingSensor(CoordinatorEntity[GoodweSettingsCoordinator], Sensor
         return None if value is None else self.entity_description.value(value)
 
 
-class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
-    """A TOU slot at a glance: off, charge or discharge, with its schedule.
+_WEEKDAY_NAMES = {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+}
+_WEEKDAYS = ("mon", "tue", "wed", "thu", "fri")
+_MONTH_NAMES = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)
 
-    Read-only, so the schedule shows even when controls are off.
+
+def _days(slot: TouSlot) -> str:
+    days = set(slot.days)
+    if len(days) == 7:
+        return "Every day"
+    if days == set(_WEEKDAYS):
+        return "Weekdays"
+    if days == {"sat", "sun"}:
+        return "Weekends"
+    # Monday first, as the GoodWe apps list them
+    order = (*_WEEKDAYS, "sat", "sun")
+    return ", ".join(_WEEKDAY_NAMES[day] for day in order if day in days) or "No days"
+
+
+def _months(slot: TouSlot) -> str:
+    if len(slot.months) == 12:
+        return "All year"
+    return ", ".join(_MONTH_NAMES[month - 1] for month in slot.months)
+
+
+def _status(slot: TouSlot) -> str:
+    if not slot.enabled:
+        return "off"
+    return "charge" if slot.charging else "discharge"
+
+
+@dataclass(frozen=True, kw_only=True)
+class TouSlotSensorEntityDescription(SensorEntityDescription):
+    """Class describing one field of a TOU slot."""
+
+    value: Callable[[TouSlot], StateType]
+
+
+TOU_SLOT_STATUS = TouSlotSensorEntityDescription(
+    key="status",
+    translation_key="tou_slot_status",
+    device_class=SensorDeviceClass.ENUM,
+    options=["off", "charge", "discharge"],
+    value=_status,
+)
+
+TOU_SLOT_FIELDS = (
+    TouSlotSensorEntityDescription(
+        key="mode",
+        translation_key="tou_slot_mode",
+        device_class=SensorDeviceClass.ENUM,
+        options=["charge", "discharge"],
+        value=lambda slot: "charge" if slot.charging else "discharge",
+    ),
+    TouSlotSensorEntityDescription(
+        key="start",
+        translation_key="tou_slot_start",
+        value=lambda slot: slot.start,
+    ),
+    TouSlotSensorEntityDescription(
+        key="end",
+        translation_key="tou_slot_end",
+        value=lambda slot: slot.end,
+    ),
+    TouSlotSensorEntityDescription(
+        key="power",
+        translation_key="tou_slot_power",
+        native_unit_of_measurement=PERCENTAGE,
+        value=lambda slot: slot.power,
+    ),
+    TouSlotSensorEntityDescription(
+        key="discharge_limit",
+        translation_key="tou_slot_discharge_limit",
+        device_class=SensorDeviceClass.ENUM,
+        options=["battery", "export"],
+        # A charging slot limits neither
+        value=lambda slot: (
+            None if slot.charging else ("export" if slot.export_limited else "battery")
+        ),
+    ),
+    TouSlotSensorEntityDescription(
+        key="cutoff_soc",
+        translation_key="tou_slot_cutoff_soc",
+        native_unit_of_measurement=PERCENTAGE,
+        value=lambda slot: slot.cutoff_soc,
+    ),
+    TouSlotSensorEntityDescription(
+        key="days",
+        translation_key="tou_slot_days",
+        value=_days,
+    ),
+    TouSlotSensorEntityDescription(
+        key="months",
+        translation_key="tou_slot_months",
+        value=_months,
+    ),
+)
+
+
+class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
+    """One field of a TOU slot, read-only so it shows with controls off.
+
+    Names start "TOU slot N", so a slot's sensors sort together on the work
+    mode device, next to the slot's switch. Unused slots start disabled.
     """
 
     _attr_has_entity_name = True
-    _attr_translation_key = "tou_slot_status"
-    _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = ["off", "charge", "discharge"]
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    entity_description: TouSlotSensorEntityDescription
 
     def __init__(
         self,
@@ -411,13 +535,17 @@ class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
         device_info: DeviceInfo,
         inverter: Inverter,
         slot: TouSlot,
+        description: TouSlotSensorEntityDescription,
     ) -> None:
         """Initialize the TOU slot sensor."""
         super().__init__(coordinator)
-        self._attr_unique_id = f"{inverter.serial_number}-tou_slot_{slot.index}"
+        self.entity_description = description
+        key = f"tou_slot_{slot.index}"
+        if description is not TOU_SLOT_STATUS:
+            key = f"{key}_{description.key}"
+        self._attr_unique_id = f"{inverter.serial_number}-{key}"
         self._attr_device_info = device_info
         self._attr_translation_placeholders = {"slot": str(slot.index)}
-        # Unused slots start disabled, as in the SEMS+ integration
         self._attr_entity_registry_enabled_default = slot.configured
         self._index = slot.index
 
@@ -427,18 +555,20 @@ class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
 
     @property
     @override
-    def native_value(self) -> str | None:
-        """Return whether the slot charges, discharges or is off."""
-        if (slot := self._slot) is None:
+    def native_value(self) -> StateType:
+        """Return the field's value."""
+        if (slot := self._slot) is None or not slot.configured:
             return None
-        if not slot.enabled:
-            return "off"
-        return "charge" if slot.charging else "discharge"
+        return self.entity_description.value(slot)
+
+
+class TouSlotStatusSensor(TouSlotSensor):
+    """A TOU slot at a glance: off, charge or discharge, with its schedule."""
 
     @property
     @override
     def extra_state_attributes(self) -> dict[str, Any] | None:
-        """Return the slot's schedule."""
+        """Return the slot's schedule, as the SEMS+ integration does."""
         if (slot := self._slot) is None:
             return None
         return {

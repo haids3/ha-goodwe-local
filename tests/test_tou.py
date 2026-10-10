@@ -82,6 +82,32 @@ async def test_tou_slots(
     assert slots == snapshot
 
 
+@pytest.mark.usefixtures("tou_inverter")
+async def test_tou_slot_fields(
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    config_entry: MockConfigEntry,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test each slot's settings show as read-only diagnostic sensors."""
+    await setup_integration(hass, config_entry, [Platform.SENSOR])
+
+    fields = {}
+    for entry in er.async_entries_for_config_entry(
+        entity_registry, config_entry.entry_id
+    ):
+        if "tou_slot" not in entry.unique_id:
+            continue
+        state = hass.states.get(entry.entity_id)
+        fields[entry.entity_id] = (
+            state.state if state else None,
+            entry.unit_of_measurement,
+            entry.entity_category,
+            entry.disabled_by is None,
+        )
+    assert fields == snapshot
+
+
 async def test_eco_mode_v1(
     hass: HomeAssistant,
     mock_inverter: MagicMock,
