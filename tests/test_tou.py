@@ -18,6 +18,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.goodwe_local.sensor import _days
+from custom_components.goodwe_local.tou import TouSlot
+
 from .conftest import setup_integration
 
 # Eco mode groups on the 745 platform: start h:m, end h:m, on/off (-7 on,
@@ -204,3 +207,20 @@ async def test_tou_slot_switch_rejected(
         )
 
     mock_inverter.write_setting.assert_not_awaited()
+
+
+@pytest.mark.parametrize(
+    ("day_bits", "expected"),
+    [
+        pytest.param(0x41, "Weekends", id="weekends"),
+        pytest.param(0x2B, "Mon, Wed, Fri, Sun", id="list"),
+        pytest.param(0x00, "No days", id="none"),
+    ],
+)
+def test_days(day_bits: int, expected: str) -> None:
+    """Test day sets read as the GoodWe apps list them."""
+    slot = TouSlot.from_schedule(
+        1, _schedule_from(f"0c000f00f9{day_bits:02x}fc1800640fff")
+    )
+
+    assert _days(slot) == expected
