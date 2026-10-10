@@ -14,24 +14,6 @@
         "default": "mdi:calendar-clock"
       }
     },
-    "button": {
-      "synchronize_clock": {
-        "default": "mdi:clock-check-outline"
-      }
-    },
-    "number": {
-      "battery_discharge_depth": {
-        "default": "mdi:battery-arrow-down"
-      },
-      "grid_export_limit": {
-        "default": "mdi:transmission-tower"
-      }
-    },
-    "select": {
-      "operation_mode": {
-        "default": "mdi:solar-power"
-      }
-    },
     "sensor": {
       "battery_discharge_depth": {
         "default": "mdi:battery-arrow-down"
@@ -81,6 +63,9 @@
       }
     },
     "switch": {
+      "tou_slot": {
+        "default": "mdi:calendar-clock"
+      },
       "work_mode_backup": {
         "default": "mdi:home-battery"
       },

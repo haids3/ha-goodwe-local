@@ -43,3 +43,12 @@ Codes become enum states in the table (work mode 35187 → Status, grid mode
 35136 → Grid, battery mode 35184 → battery Status). The mappings are ET
 codes; DT and ES reuse some sensor IDs with other meanings, which is why
 the table applies to ET only.
+
+## Writes
+
+The integration only turns things on or off, by design: the work mode
+enables and the on/off byte of an existing TOU slot (`eco_mode_N_switch`,
+the high byte of the group's third register). Anything with a value is
+read-only here. Don't add numbers, selects, times or schedule writes; SEMS+
+or the app validate those before they reach the inverter, a Modbus write
+does not.

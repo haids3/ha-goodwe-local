@@ -37,33 +37,6 @@
         "name": "TOU mode"
       }
     },
-    "button": {
-      "synchronize_clock": {
-        "name": "Synchronize inverter clock"
-      }
-    },
-    "number": {
-      "battery_discharge_depth": {
-        "name": "Depth of discharge (on-grid)"
-      },
-      "grid_export_limit": {
-        "name": "Grid export limit"
-      }
-    },
-    "select": {
-      "operation_mode": {
-        "name": "Operation mode",
-        "state": {
-          "backup": "Backup mode",
-          "eco": "Eco mode",
-          "eco_charge": "Eco charge mode",
-          "eco_discharge": "Eco discharge mode",
-          "general": "General mode",
-          "off_grid": "Off-grid mode",
-          "peak_shaving": "Peak shaving mode"
-        }
-      }
-    },
     "sensor": {
       "ac_current": {
         "name": "AC current"
@@ -473,6 +446,9 @@
       }
     },
     "switch": {
+      "tou_slot": {
+        "name": "TOU slot {slot}"
+      },
       "work_mode_backup": {
         "name": "Backup mode"
       },
@@ -490,6 +466,9 @@
   "exceptions": {
     "work_mode_switch_rejected": {
       "message": "The inverter work mode could not be changed: {error}"
+    },
+    "tou_slot_rejected": {
+      "message": "TOU slot {slot} could not be changed: {error}"
     }
   },
   "options": {
@@ -499,7 +478,7 @@
           "allow_control": "Allow controls"
         },
         "data_description": {
-          "allow_control": "Create entities that change the inverter's settings: export limit, depth of discharge, work modes and the clock. Without this, the settings are shown read-only."
+          "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Values such as the export limit and the TOU schedule stay read-only here; change them in the GoodWe app or through SEMS+, which check them first."
         },
         "title": "GoodWe options"
       }

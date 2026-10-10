@@ -13,11 +13,14 @@ bit and NUL-padded model names.
 
 ## Differences from the built-in integration
 
-- **Controls are off by default.** Settings (export limit, depth of
-  discharge, operation mode or work modes) are shown read-only. Turning on
-  *Allow controls* in the integration's options adds the entities that write
-  to the inverter, and the read-only ones stay, so nothing is removed when
-  controls are switched on or off.
+- **Only on/off over Modbus, and only when allowed.** Settings (export
+  limit, depth of discharge, operation mode, work modes and TOU slots) are
+  shown read-only. Turning on *Allow controls* in the integration's options
+  adds switches for the work modes and for TOU slots already set up, and
+  nothing else: a raw register write has no validation, so values such as
+  limits, powers and times are left to the GoodWe app or SEMS+, which check
+  them. A slot switch writes only the slot's on/off byte, after reading the
+  slot again. The read-only entities stay whether controls are on or off.
 - Settings are read every 5 minutes, so changes made in the GoodWe apps show
   up in Home Assistant.
 - **Devices like the GoodWe apps.** The inverter carries power flow, status,

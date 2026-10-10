@@ -1,22 +1,6 @@
 # serializer version: 1
 # name: test_entities[operation_mode-controls]
   dict({
-    'button.mock_title_synchronize_inverter_clock': tuple(
-      'unknown',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
-    'number.mock_title_battery_depth_of_discharge_on_grid': tuple(
-      '50.0',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
-    'number.mock_title_grid_export_limit': tuple(
-      '10000.0',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
-    'select.mock_title_work_mode_operation_mode': tuple(
-      'general',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
@@ -64,18 +48,6 @@
     'binary_sensor.mock_title_work_mode_tou_mode': tuple(
       'on',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-    ),
-    'button.mock_title_synchronize_inverter_clock': tuple(
-      'unknown',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
-    'number.mock_title_battery_depth_of_discharge_on_grid': tuple(
-      '50.0',
-      <EntityCategory.CONFIG: 'config'>,
-    ),
-    'number.mock_title_grid_export_limit': tuple(
-      '10000.0',
-      <EntityCategory.CONFIG: 'config'>,
     ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Self
 
 from goodwe import Inverter
-from goodwe.sensor import Schedule
+from goodwe.sensor import Schedule, ScheduleType
 
 TOU_SLOTS = 4
 
@@ -67,6 +67,33 @@ def _months(bits: int) -> tuple[int, ...]:
     if bits == 0:
         bits = _ALL_MONTHS
     return tuple(month + 1 for month in range(12) if bits & (1 << month))
+
+
+# Groups of other types (peak shaving, smart charge, dry contact) belong to
+# other modes, which their own switches control
+_TOU_TYPES = (ScheduleType.ECO_MODE, ScheduleType.ECO_MODE_745)
+
+
+async def async_set_tou_slot(inverter: Inverter, index: int, enabled: bool) -> None:
+    """Turn an existing slot on or off, writing only its on/off byte.
+
+    Everything else about a slot is set in the GoodWe app or through SEMS+,
+    which check the values before they reach the inverter.
+    """
+    schedule = await inverter.read_setting(f"eco_mode_{index}")
+    if not isinstance(schedule, Schedule):
+        raise ValueError("this firmware's eco mode groups are not supported")
+    if not TouSlot.from_schedule(index, schedule).configured:
+        raise ValueError("the slot has no times; set it up in the GoodWe app first")
+    schedule_type = schedule.schedule_type
+    if schedule_type not in _TOU_TYPES:
+        raise ValueError(f"the slot holds a {schedule_type.name.lower()} schedule")
+    # The high byte of the group's third register; the day bits beside it
+    # are read back and kept
+    await inverter.write_setting(
+        f"eco_mode_{index}_switch",
+        -1 - schedule_type if enabled else int(schedule_type),
+    )
 
 
 async def async_read_tou_slots(inverter: Inverter) -> dict[int, TouSlot]:

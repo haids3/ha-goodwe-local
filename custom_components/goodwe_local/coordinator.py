@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import logging
 from typing import Any, override
 
-from goodwe import Inverter, InverterError, OperationMode, RequestFailedException
+from goodwe import Inverter, InverterError, RequestFailedException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -145,7 +145,6 @@ class GoodweSettingsCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self.inverter = inverter
         self.supported: frozenset[str] | None = None
-        self.operation_modes: tuple[OperationMode, ...] = ()
 
     @override
     async def _async_update_data(self) -> dict[str, Any]:
@@ -174,7 +173,5 @@ class GoodweSettingsCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # An empty switch set means the firmware has none
             if value is not None and value != {}:
                 data[key] = value
-        if SETTING_OPERATION_MODE in data:
-            self.operation_modes = await self.inverter.get_operation_modes(False)
         self.supported = frozenset(data)
         return data

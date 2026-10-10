@@ -14,6 +14,8 @@ from custom_components.goodwe_local.const import CONF_ALLOW_CONTROL, PLATFORMS
 
 from .conftest import setup_integration
 
+SWITCH_ENTITY_ID = "switch.mock_title_work_mode_tou_mode"
+
 V3_SWITCHES = {
     WorkModeSwitch.BACKUP: True,
     WorkModeSwitch.TOU: True,
@@ -54,15 +56,15 @@ async def test_entities(
     } == snapshot
 
 
+@pytest.mark.usefixtures("mock_switches")
 async def test_allow_control_option(
     hass: HomeAssistant,
     entity_registry: er.EntityRegistry,
-    mock_inverter: MagicMock,
     config_entry: MockConfigEntry,
 ) -> None:
     """Test allowing controls in the options adds them without a restart."""
     await setup_integration(hass, config_entry, PLATFORMS)
-    assert hass.states.get("number.mock_title_grid_export_limit") is None
+    assert hass.states.get(SWITCH_ENTITY_ID) is None
 
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
     await hass.config_entries.options.async_configure(
@@ -71,6 +73,6 @@ async def test_allow_control_option(
     await hass.async_block_till_done()
 
     assert config_entry.options == {CONF_ALLOW_CONTROL: True}
-    assert hass.states.get("number.mock_title_grid_export_limit")
+    assert hass.states.get(SWITCH_ENTITY_ID)
     # The read-only view stays, so turning controls on or off removes nothing
-    assert hass.states.get("sensor.mock_title_grid_export_limit")
+    assert hass.states.get("binary_sensor.mock_title_work_mode_tou_mode")
