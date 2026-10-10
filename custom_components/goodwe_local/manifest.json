@@ -1,0 +1,17 @@
+{
+  "domain": "goodwe_local",
+  "name": "GoodWe Local",
+  "codeowners": ["@haids3"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/haids3/ha-goodwe-local",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/haids3/ha-goodwe-local/issues",
+  "loggers": ["goodwe"],
+  "requirements": [
+    "goodwe @ git+https://github.com/haids3/goodwe.git@caa3bdb"
+  ],
+  "version": "0.1.0",
+  "zeroconf": ["_goodwe._tcp.local."]
+}

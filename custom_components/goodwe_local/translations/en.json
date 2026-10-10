@@ -1,0 +1,73 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Failed to connect"
+    },
+    "error": {
+      "connection_error": "Failed to connect"
+    },
+    "flow_title": "{name}",
+    "step": {
+      "discovery_confirm": {
+        "description": "Do you want to set up the GoodWe inverter {serial_number} at {host}?",
+        "title": "GoodWe inverter"
+      },
+      "user": {
+        "data": {
+          "host": "IP address"
+        },
+        "description": "Connect to inverter",
+        "title": "GoodWe inverter"
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "synchronize_clock": {
+        "name": "Synchronize inverter clock"
+      }
+    },
+    "number": {
+      "battery_discharge_depth": {
+        "name": "Depth of discharge (on-grid)"
+      },
+      "grid_export_limit": {
+        "name": "Grid export limit"
+      }
+    },
+    "select": {
+      "operation_mode": {
+        "name": "Inverter operation mode",
+        "state": {
+          "backup": "Backup mode",
+          "eco": "Eco mode",
+          "eco_charge": "Eco charge mode",
+          "eco_discharge": "Eco discharge mode",
+          "general": "General mode",
+          "off_grid": "Off-grid mode",
+          "peak_shaving": "Peak shaving mode"
+        }
+      }
+    },
+    "switch": {
+      "work_mode_backup": {
+        "name": "Backup mode"
+      },
+      "work_mode_peak_shaving": {
+        "name": "Peak shaving mode"
+      },
+      "work_mode_smart_charge": {
+        "name": "Smart charge mode"
+      },
+      "work_mode_tou": {
+        "name": "TOU mode"
+      }
+    }
+  },
+  "exceptions": {
+    "work_mode_switch_rejected": {
+      "message": "The inverter work mode could not be changed: {error}"
+    }
+  }
+}

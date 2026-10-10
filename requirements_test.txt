@@ -1,0 +1,4 @@
+goodwe @ git+https://github.com/haids3/goodwe.git@caa3bdb
+pytest-homeassistant-custom-component==0.13.344
+syrupy
+ruff

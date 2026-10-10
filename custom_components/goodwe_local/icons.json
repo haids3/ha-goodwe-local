@@ -1,0 +1,36 @@
+{
+  "entity": {
+    "button": {
+      "synchronize_clock": {
+        "default": "mdi:clock-check-outline"
+      }
+    },
+    "number": {
+      "battery_discharge_depth": {
+        "default": "mdi:battery-arrow-down"
+      },
+      "grid_export_limit": {
+        "default": "mdi:transmission-tower"
+      }
+    },
+    "select": {
+      "operation_mode": {
+        "default": "mdi:solar-power"
+      }
+    },
+    "switch": {
+      "work_mode_backup": {
+        "default": "mdi:home-battery"
+      },
+      "work_mode_peak_shaving": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "work_mode_smart_charge": {
+        "default": "mdi:battery-clock"
+      },
+      "work_mode_tou": {
+        "default": "mdi:calendar-clock"
+      }
+    }
+  }
+}
