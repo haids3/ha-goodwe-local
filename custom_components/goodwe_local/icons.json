@@ -36,11 +36,40 @@
       "battery_discharge_depth": {
         "default": "mdi:battery-arrow-down"
       },
+      "diagnostic_status": {
+        "default": "mdi:stethoscope"
+      },
+      "errors": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "grid": {
+        "default": "mdi:transmission-tower",
+        "state": {
+          "off_grid": "mdi:transmission-tower-off",
+          "fault": "mdi:transmission-tower-off"
+        }
+      },
+      "grid_direction": {
+        "default": "mdi:transmission-tower",
+        "state": {
+          "exporting": "mdi:transmission-tower-export",
+          "importing": "mdi:transmission-tower-import"
+        }
+      },
       "grid_export_limit": {
         "default": "mdi:transmission-tower"
       },
       "operation_mode": {
         "default": "mdi:solar-power"
+      },
+      "pv_string_status": {
+        "default": "mdi:solar-panel"
+      },
+      "status": {
+        "default": "mdi:information-outline"
+      },
+      "warnings": {
+        "default": "mdi:alert-outline"
       }
     },
     "switch": {

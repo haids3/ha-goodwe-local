@@ -52,7 +52,7 @@
     },
     "select": {
       "operation_mode": {
-        "name": "Inverter operation mode",
+        "name": "Operation mode",
         "state": {
           "backup": "Backup mode",
           "eco": "Eco mode",
@@ -65,14 +65,240 @@
       }
     },
     "sensor": {
+      "ac_current": {
+        "name": "AC current"
+      },
+      "ac_frequency": {
+        "name": "AC frequency"
+      },
+      "ac_input_today": {
+        "name": "AC input today"
+      },
+      "ac_input_total": {
+        "name": "AC input total"
+      },
+      "ac_output_today": {
+        "name": "AC output today"
+      },
+      "ac_output_total": {
+        "name": "AC output total"
+      },
+      "ac_power": {
+        "name": "AC power"
+      },
+      "ac_voltage": {
+        "name": "AC voltage"
+      },
+      "active_power": {
+        "name": "Active power"
+      },
+      "air_temperature": {
+        "name": "Air temperature"
+      },
+      "apparent_power": {
+        "name": "Apparent power"
+      },
+      "backup_current": {
+        "name": "Backup current"
+      },
+      "backup_frequency": {
+        "name": "Backup frequency"
+      },
+      "backup_load_power": {
+        "name": "Backup load power"
+      },
+      "backup_load_rate": {
+        "name": "Backup load rate"
+      },
+      "backup_voltage": {
+        "name": "Backup voltage"
+      },
       "battery_discharge_depth": {
         "name": "Depth of discharge (on-grid)"
+      },
+      "battery_index": {
+        "name": "Battery index"
+      },
+      "battery_modules": {
+        "name": "Modules"
+      },
+      "battery_power": {
+        "name": "Power"
+      },
+      "battery_protocol": {
+        "name": "Protocol"
+      },
+      "bms": {
+        "name": "BMS"
+      },
+      "bms_status": {
+        "name": "BMS status"
+      },
+      "bus_voltage": {
+        "name": "Bus voltage"
+      },
+      "charge_today": {
+        "name": "Charge today"
+      },
+      "charge_total": {
+        "name": "Charge total"
+      },
+      "communication_mode": {
+        "name": "Communication mode"
+      },
+      "communication_status": {
+        "name": "Communication status"
+      },
+      "consumption_today": {
+        "name": "Consumption today"
+      },
+      "consumption_total": {
+        "name": "Consumption total"
+      },
+      "current": {
+        "name": "Current"
+      },
+      "diagnostic_status": {
+        "name": "Diagnostic status"
+      },
+      "diagnostic_status_code": {
+        "name": "Diagnostic status code"
+      },
+      "discharge_today": {
+        "name": "Discharge today"
+      },
+      "discharge_total": {
+        "name": "Discharge total"
+      },
+      "error_code": {
+        "name": "Error code"
+      },
+      "error_code_high": {
+        "name": "Error code (high)"
+      },
+      "error_code_low": {
+        "name": "Error code (low)"
+      },
+      "errors": {
+        "name": "Errors"
+      },
+      "export_total": {
+        "name": "Export total"
+      },
+      "frequency": {
+        "name": "Frequency"
+      },
+      "function_bits": {
+        "name": "Function bits"
+      },
+      "grid": {
+        "name": "Grid",
+        "state": {
+          "fault": "Fault",
+          "off_grid": "Off-grid",
+          "on_grid": "On-grid"
+        }
+      },
+      "grid_direction": {
+        "name": "Grid direction",
+        "state": {
+          "exporting": "Exporting",
+          "idle": "Idle",
+          "importing": "Importing"
+        }
       },
       "grid_export_limit": {
         "name": "Grid export limit"
       },
+      "grid_power": {
+        "name": "Grid power"
+      },
+      "hardware_version": {
+        "name": "Hardware version"
+      },
+      "import_total": {
+        "name": "Import total"
+      },
+      "inverter_clock": {
+        "name": "Inverter clock"
+      },
+      "inverter_power": {
+        "name": "Inverter power"
+      },
+      "load_power": {
+        "name": "Load power"
+      },
+      "manufacturer_code": {
+        "name": "Manufacturer code"
+      },
+      "max_cell_temperature": {
+        "name": "Maximum cell temperature"
+      },
+      "max_cell_temperature_id": {
+        "name": "Maximum cell temperature ID"
+      },
+      "max_cell_voltage": {
+        "name": "Maximum cell voltage"
+      },
+      "max_cell_voltage_id": {
+        "name": "Maximum cell voltage ID"
+      },
+      "max_charge_current": {
+        "name": "Maximum charge current"
+      },
+      "max_discharge_current": {
+        "name": "Maximum discharge current"
+      },
+      "meter_2_communication_status": {
+        "name": "Meter 2 communication status"
+      },
+      "meter_2_export_total": {
+        "name": "Meter 2 export total"
+      },
+      "meter_2_import_total": {
+        "name": "Meter 2 import total"
+      },
+      "meter_2_power": {
+        "name": "Meter 2 power"
+      },
+      "meter_reactive_power": {
+        "name": "Meter reactive power"
+      },
+      "meter_type": {
+        "name": "Meter type"
+      },
+      "min_cell_temperature": {
+        "name": "Minimum cell temperature"
+      },
+      "min_cell_temperature_id": {
+        "name": "Minimum cell temperature ID"
+      },
+      "min_cell_voltage": {
+        "name": "Minimum cell voltage"
+      },
+      "min_cell_voltage_id": {
+        "name": "Minimum cell voltage ID"
+      },
+      "module_temperature": {
+        "name": "Module temperature"
+      },
+      "mppt_current": {
+        "name": "MPPT{mppt} current"
+      },
+      "mppt_power": {
+        "name": "MPPT{mppt} power"
+      },
+      "negative_bus_voltage": {
+        "name": "Negative bus voltage"
+      },
+      "on_grid_load_power": {
+        "name": "On-grid load power"
+      },
+      "operating_hours": {
+        "name": "Operating hours"
+      },
       "operation_mode": {
-        "name": "Inverter operation mode",
+        "name": "Operation mode",
         "state": {
           "backup": "Backup mode",
           "eco": "Eco mode",
@@ -82,6 +308,160 @@
           "off_grid": "Off-grid mode",
           "peak_shaving": "Peak shaving mode"
         }
+      },
+      "phase_ac_current": {
+        "name": "Phase {phase} AC current"
+      },
+      "phase_ac_frequency": {
+        "name": "Phase {phase} AC frequency"
+      },
+      "phase_ac_power": {
+        "name": "Phase {phase} AC power"
+      },
+      "phase_ac_voltage": {
+        "name": "Phase {phase} AC voltage"
+      },
+      "phase_active_power": {
+        "name": "Phase {phase} active power"
+      },
+      "phase_apparent_power": {
+        "name": "Phase {phase} apparent power"
+      },
+      "phase_backup_current": {
+        "name": "Phase {phase} backup current"
+      },
+      "phase_backup_frequency": {
+        "name": "Phase {phase} backup frequency"
+      },
+      "phase_backup_power": {
+        "name": "Phase {phase} backup power"
+      },
+      "phase_backup_voltage": {
+        "name": "Phase {phase} backup voltage"
+      },
+      "phase_current": {
+        "name": "Phase {phase} current"
+      },
+      "phase_export_total": {
+        "name": "Phase {phase} export total"
+      },
+      "phase_import_total": {
+        "name": "Phase {phase} import total"
+      },
+      "phase_load_mode": {
+        "name": "Phase {phase} load mode"
+      },
+      "phase_on_grid_load_power": {
+        "name": "Phase {phase} on-grid load power"
+      },
+      "phase_power": {
+        "name": "Phase {phase} power"
+      },
+      "phase_power_factor": {
+        "name": "Phase {phase} power factor"
+      },
+      "phase_reactive_power": {
+        "name": "Phase {phase} reactive power"
+      },
+      "phase_voltage": {
+        "name": "Phase {phase} voltage"
+      },
+      "power": {
+        "name": "Power"
+      },
+      "power_factor": {
+        "name": "Power factor"
+      },
+      "pv_channels": {
+        "name": "PV channels"
+      },
+      "pv_energy_today": {
+        "name": "PV energy today"
+      },
+      "pv_energy_total": {
+        "name": "PV energy total"
+      },
+      "pv_power": {
+        "name": "PV power"
+      },
+      "pv_power_mppt_total": {
+        "name": "PV power (MPPT total)"
+      },
+      "pv_string_current": {
+        "name": "PV{string} current"
+      },
+      "pv_string_power": {
+        "name": "PV{string} power"
+      },
+      "pv_string_status": {
+        "name": "PV{string} status",
+        "state": {
+          "no_power": "No power",
+          "not_connected": "Not connected",
+          "producing": "Producing"
+        }
+      },
+      "pv_string_voltage": {
+        "name": "PV{string} voltage"
+      },
+      "reactive_power": {
+        "name": "Reactive power"
+      },
+      "running_mode_code": {
+        "name": "Running mode code"
+      },
+      "safety_country": {
+        "name": "Safety country"
+      },
+      "safety_country_code": {
+        "name": "Safety country code"
+      },
+      "signal_strength": {
+        "name": "Signal strength"
+      },
+      "software_version": {
+        "name": "Software version"
+      },
+      "state_of_charge": {
+        "name": "State of charge"
+      },
+      "state_of_health": {
+        "name": "State of health"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "charging": "Charging",
+          "discharging": "Discharging",
+          "fault": "Fault",
+          "maintenance": "Maintenance",
+          "no_battery": "No battery",
+          "running": "Running",
+          "standby": "Standby",
+          "to_be_charged": "Waiting to charge",
+          "to_be_discharged": "Waiting to discharge"
+        }
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "test_status": {
+        "name": "Test status"
+      },
+      "voltage": {
+        "name": "Voltage"
+      },
+      "warning_code": {
+        "name": "Warning code"
+      },
+      "warning_code_high": {
+        "name": "Warning code (high)"
+      },
+      "warning_code_low": {
+        "name": "Warning code (low)"
+      },
+      "warnings": {
+        "name": "Warnings"
       }
     },
     "switch": {

@@ -15,6 +15,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from .coordinator import GoodweConfigEntry
+from .entity import GoodweDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ async def async_setup_entry(
     if not config_entry.runtime_data.allow_control:
         return
     inverter = config_entry.runtime_data.inverter
-    device_info = config_entry.runtime_data.device_info
+    device_info = config_entry.runtime_data.devices[GoodweDevice.INVERTER]
 
     # read current time from the inverter
     try:

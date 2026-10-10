@@ -18,6 +18,7 @@ PLATFORMS = [
 ]
 
 DEFAULT_NAME = "GoodWe"
+MANUFACTURER = "GoodWe"
 SCAN_INTERVAL = timedelta(seconds=10)
 # Picks up changes made in the GoodWe apps without adding much Modbus traffic
 SETTINGS_SCAN_INTERVAL = timedelta(minutes=5)

@@ -1,7 +1,7 @@
 """Support for GoodWe inverter via UDP."""
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 import logging
@@ -36,6 +36,7 @@ from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
+from .catalog import SensorSpec, sensor_spec
 from .const import MODE_TO_OPTION
 from .coordinator import (
     SETTING_BATTERY_DISCHARGE_DEPTH,
@@ -46,14 +47,14 @@ from .coordinator import (
     GoodweUpdateCoordinator,
     setting_unit,
 )
+from .entity import GoodweDevice
 
 # Coordinator handles all data updates, so parallel updates are not needed
 PARALLEL_UPDATES = 0
 
 _LOGGER = logging.getLogger(__name__)
 
-# Sensor name of battery SoC
-BATTERY_SOC = "battery_soc"
+_STATE_OF_CHARGE = frozenset({"battery_soc", "battery2_soc"})
 
 # Sensors that are reset to 0 at midnight.
 # The inverter is only powered by the solar panels and not
@@ -67,19 +68,6 @@ BATTERY_SOC = "battery_soc"
 # will not reset the values but let the inverter reset them
 # by looking at the unavailable state of the inverter.
 DAILY_RESET = ["e_day", "e_load_day"]
-
-_MAIN_SENSORS = (
-    "ppv",
-    "house_consumption",
-    "active_power",
-    "battery_soc",
-    "e_day",
-    "e_total",
-    "meter_e_total_exp",
-    "meter_e_total_imp",
-    "e_bat_charge_total",
-    "e_bat_discharge_total",
-)
 
 _ICONS: dict[SensorKind, str] = {
     SensorKind.PV: "mdi:solar-power",
@@ -181,6 +169,7 @@ TEXT_SENSOR = GoodweSensorEntityDescription(
 class GoodweSettingSensorEntityDescription(SensorEntityDescription):
     """Class describing a read-only view of an inverter setting."""
 
+    device: GoodweDevice
     value: Callable[[Any], StateType] = lambda value: value
 
 
@@ -189,17 +178,20 @@ SETTING_SENSORS = (
         key=SETTING_GRID_EXPORT_LIMIT,
         translation_key="grid_export_limit",
         entity_category=EntityCategory.DIAGNOSTIC,
+        device=GoodweDevice.INVERTER,
     ),
     GoodweSettingSensorEntityDescription(
         key=SETTING_BATTERY_DISCHARGE_DEPTH,
         translation_key="battery_discharge_depth",
         entity_category=EntityCategory.DIAGNOSTIC,
+        device=GoodweDevice.BATTERY,
         native_unit_of_measurement=PERCENTAGE,
     ),
     GoodweSettingSensorEntityDescription(
         key=SETTING_OPERATION_MODE,
         translation_key="operation_mode",
         entity_category=EntityCategory.DIAGNOSTIC,
+        device=GoodweDevice.WORK_MODE,
         device_class=SensorDeviceClass.ENUM,
         options=list(MODE_TO_OPTION.values()),
         value=MODE_TO_OPTION.get,
@@ -217,22 +209,55 @@ async def async_setup_entry(
     inverter = config_entry.runtime_data.inverter
     coordinator = config_entry.runtime_data.coordinator
     settings = config_entry.runtime_data.settings
-    device_info = config_entry.runtime_data.device_info
+    devices = config_entry.runtime_data.devices
 
-    # Individual inverter sensors entities
-    entities.extend(
-        InverterSensor(coordinator, device_info, inverter, sensor)
-        for sensor in inverter.sensors()
-        if not sensor.id_.startswith("xx")
-    )
+    for sensor in inverter.sensors():
+        if (
+            sensor.id_.startswith("xx")
+            or (spec := sensor_spec(inverter, sensor)) is None
+        ):
+            continue
+        entities.append(
+            InverterSensor(coordinator, devices[spec.device], inverter, sensor, spec)
+        )
     # Settings show read-only whether or not controls are allowed
     entities.extend(
-        InverterSettingSensor(settings, device_info, description, inverter)
+        InverterSettingSensor(
+            settings, devices[description.device], description, inverter
+        )
         for description in SETTING_SENSORS
         if description.key in settings.supported
     )
 
     async_add_entities(entities)
+
+
+def _description(sensor: Sensor, spec: SensorSpec) -> GoodweSensorEntityDescription:
+    """Combine the unit's description with how the table shows the sensor."""
+    if spec.states is not None:
+        base = GoodweSensorEntityDescription(
+            key=sensor.id_,
+            device_class=SensorDeviceClass.ENUM,
+            options=sorted(set(spec.states.values())),
+        )
+    elif sensor.unit in _DESCRIPTIONS:
+        base = _DESCRIPTIONS[sensor.unit]
+    elif "Enum" in type(sensor).__name__ or sensor.id_ == "timestamp":
+        base = TEXT_SENSOR
+    else:
+        base = DIAG_SENSOR
+    return replace(
+        base,
+        key=sensor.id_,
+        translation_key=spec.translation_key,
+        entity_category=spec.entity_category,
+        entity_registry_enabled_default=spec.enabled,
+        device_class=(
+            SensorDeviceClass.BATTERY
+            if sensor.id_ in _STATE_OF_CHARGE
+            else base.device_class
+        ),
+    )
 
 
 class InverterSensor(CoordinatorEntity[GoodweUpdateCoordinator], SensorEntity):
@@ -247,35 +272,35 @@ class InverterSensor(CoordinatorEntity[GoodweUpdateCoordinator], SensorEntity):
         device_info: DeviceInfo,
         inverter: Inverter,
         sensor: Sensor,
+        spec: SensorSpec,
     ) -> None:
         """Initialize an inverter sensor."""
         super().__init__(coordinator)
-        self._attr_name = sensor.name.strip()
         self._attr_unique_id = f"{inverter.serial_number}-{sensor.id_}"
         self._attr_device_info = device_info
-        self._attr_entity_category = (
-            EntityCategory.DIAGNOSTIC if sensor.id_ not in _MAIN_SENSORS else None
-        )
-        try:
-            self.entity_description = _DESCRIPTIONS[sensor.unit]
-        except KeyError:
-            if "Enum" in type(sensor).__name__ or sensor.id_ == "timestamp":
-                self.entity_description = TEXT_SENSOR
-            else:
-                self.entity_description = DIAG_SENSOR
-                self._attr_native_unit_of_measurement = sensor.unit
-        self._attr_icon = _ICONS.get(sensor.kind)
-        # Set the inverter SoC as main device battery sensor
-        if sensor.id_ == BATTERY_SOC:
-            self._attr_device_class = SensorDeviceClass.BATTERY
+        self.entity_description = _description(sensor, spec)
+        if spec.translation_key is None:
+            self._attr_name = sensor.name.strip()
+            self._attr_icon = _ICONS.get(sensor.kind)
+        else:
+            self._attr_translation_placeholders = dict(spec.placeholders)
+        if self.entity_description.device_class is None and not spec.states:
+            # Units the table of descriptions does not know
+            self._attr_native_unit_of_measurement = sensor.unit or None
         self._sensor = sensor
+        self._spec = spec
         self._stop_reset: Callable[[], None] | None = None
 
     @property
     @override
     def native_value(self) -> StateType | date | datetime | Decimal:
         """Return the value reported by the sensor."""
-        return self.entity_description.value(self.coordinator, self._sensor.id_)
+        value = self.entity_description.value(self.coordinator, self._sensor.id_)
+        if self._spec.states is not None:
+            return self._spec.states.get(value)
+        if self._spec.negate and value is not None:
+            return -value
+        return value
 
     @property
     @override

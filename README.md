@@ -20,6 +20,17 @@ bit and NUL-padded model names.
   controls are switched on or off.
 - Settings are read every 5 minutes, so changes made in the GoodWe apps show
   up in Home Assistant.
+- **Devices like the GoodWe apps.** The inverter carries power flow, status,
+  grid connection and PV strings; the battery, smart meter and work modes are
+  devices of their own, connected via the inverter.
+- **Names from the apps, not the register map.** ET-family inverters (ET,
+  EH, BT, BH, EHA and the other hybrids) get curated names, such as
+  "Grid power" for "Active Power" and "Status" for "Work Mode code". About 60
+  sensors are shown by default; the remaining register readings exist but are
+  disabled. Other families keep the library's names, with the main sensors
+  shown.
+- **Signs as Home Assistant expects.** Grid power is positive while
+  importing, and battery power positive while discharging.
 - Zeroconf discovery of GoodWe WiFi/LAN dongles (`_goodwe._tcp`).
 - Work mode 3.0 firmware gets one switch per work mode (backup, TOU, smart
   charge, peak shaving) instead of the operation-mode select.

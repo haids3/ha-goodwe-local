@@ -24,6 +24,7 @@ from .coordinator import (
     GoodweSettingsCoordinator,
     setting_unit,
 )
+from .entity import GoodweDevice
 
 PARALLEL_UPDATES = 1
 
@@ -32,6 +33,7 @@ PARALLEL_UPDATES = 1
 class GoodweNumberEntityDescription(NumberEntityDescription):
     """Class describing Goodwe number entities."""
 
+    device: GoodweDevice
     setter: Callable[[Inverter, int], Awaitable[None]]
     filter: Callable[[Inverter], bool]
 
@@ -49,6 +51,7 @@ NUMBERS = (
         native_step=100,
         native_min_value=0,
         native_max_value=10000,
+        device=GoodweDevice.INVERTER,
         setter=lambda inv, val: inv.set_grid_export_limit(val),
         filter=lambda inv: setting_unit(inv, SETTING_GRID_EXPORT_LIMIT) != "%",
     ),
@@ -61,6 +64,7 @@ NUMBERS = (
         native_step=1,
         native_min_value=0,
         native_max_value=200,
+        device=GoodweDevice.INVERTER,
         setter=lambda inv, val: inv.set_grid_export_limit(val),
         filter=lambda inv: setting_unit(inv, SETTING_GRID_EXPORT_LIMIT) == "%",
     ),
@@ -72,6 +76,7 @@ NUMBERS = (
         native_step=1,
         native_min_value=0,
         native_max_value=99,
+        device=GoodweDevice.BATTERY,
         setter=lambda inv, val: inv.set_ongrid_battery_dod(val),
         filter=lambda inv: True,
     ),
@@ -90,7 +95,10 @@ async def async_setup_entry(
     settings = runtime_data.settings
     async_add_entities(
         InverterNumberEntity(
-            settings, runtime_data.device_info, description, runtime_data.inverter
+            settings,
+            runtime_data.devices[description.device],
+            description,
+            runtime_data.inverter,
         )
         for description in NUMBERS
         if description.key in settings.supported

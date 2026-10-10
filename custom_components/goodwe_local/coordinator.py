@@ -13,6 +13,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import SCAN_INTERVAL, SETTINGS_SCAN_INTERVAL
+from .entity import GoodweDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class GoodweRuntimeData:
     inverter: Inverter
     coordinator: GoodweUpdateCoordinator
     settings: GoodweSettingsCoordinator
-    device_info: DeviceInfo
+    devices: dict[GoodweDevice, DeviceInfo]
     allow_control: bool
 
 

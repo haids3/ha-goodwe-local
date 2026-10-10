@@ -19,6 +19,7 @@ from .coordinator import (
     GoodweConfigEntry,
     GoodweSettingsCoordinator,
 )
+from .entity import GoodweDevice
 
 # Coordinator handles all data updates, so parallel updates are not needed
 PARALLEL_UPDATES = 0
@@ -44,7 +45,7 @@ async def async_setup_entry(
     async_add_entities(
         InverterWorkModeBinarySensor(
             settings,
-            runtime_data.device_info,
+            runtime_data.devices[GoodweDevice.WORK_MODE],
             WORK_MODES[switch],
             runtime_data.inverter,
             switch,

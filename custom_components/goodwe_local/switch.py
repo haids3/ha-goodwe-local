@@ -18,6 +18,7 @@ from .coordinator import (
     GoodweConfigEntry,
     GoodweSettingsCoordinator,
 )
+from .entity import GoodweDevice
 
 # The dongle may limit concurrent connections
 PARALLEL_UPDATES = 1
@@ -45,7 +46,7 @@ async def async_setup_entry(
     async_add_entities(
         InverterWorkModeSwitchEntity(
             settings,
-            runtime_data.device_info,
+            runtime_data.devices[GoodweDevice.WORK_MODE],
             WORK_MODE_SWITCHES[switch],
             runtime_data.inverter,
             switch,

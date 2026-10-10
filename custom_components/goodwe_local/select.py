@@ -17,6 +17,7 @@ from .coordinator import (
     GoodweConfigEntry,
     GoodweSettingsCoordinator,
 )
+from .entity import GoodweDevice
 
 PARALLEL_UPDATES = 1
 
@@ -44,7 +45,7 @@ async def async_setup_entry(
             [
                 InverterOperationModeEntity(
                     settings,
-                    runtime_data.device_info,
+                    runtime_data.devices[GoodweDevice.WORK_MODE],
                     OPERATION_MODE,
                     runtime_data.inverter,
                 )

@@ -1,5 +1,5 @@
 # serializer version: 1
-# name: test_entities[switch.mock_title_backup_mode-entry]
+# name: test_entities[switch.mock_title_work_mode_backup_mode-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -13,7 +13,7 @@
     'disabled_by': None,
     'domain': 'switch',
     'entity_category': <EntityCategory.CONFIG: 'config'>,
-    'entity_id': 'switch.mock_title_backup_mode',
+    'entity_id': 'switch.mock_title_work_mode_backup_mode',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -36,20 +36,20 @@
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[switch.mock_title_backup_mode-state]
+# name: test_entities[switch.mock_title_work_mode_backup_mode-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Backup mode',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Work mode Backup mode',
     }),
     'context': <ANY>,
-    'entity_id': 'switch.mock_title_backup_mode',
+    'entity_id': 'switch.mock_title_work_mode_backup_mode',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'off',
   })
 # ---
-# name: test_entities[switch.mock_title_peak_shaving_mode-entry]
+# name: test_entities[switch.mock_title_work_mode_peak_shaving_mode-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -63,7 +63,7 @@
     'disabled_by': None,
     'domain': 'switch',
     'entity_category': <EntityCategory.CONFIG: 'config'>,
-    'entity_id': 'switch.mock_title_peak_shaving_mode',
+    'entity_id': 'switch.mock_title_work_mode_peak_shaving_mode',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -86,20 +86,20 @@
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[switch.mock_title_peak_shaving_mode-state]
+# name: test_entities[switch.mock_title_work_mode_peak_shaving_mode-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Peak shaving mode',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Work mode Peak shaving mode',
     }),
     'context': <ANY>,
-    'entity_id': 'switch.mock_title_peak_shaving_mode',
+    'entity_id': 'switch.mock_title_work_mode_peak_shaving_mode',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'off',
   })
 # ---
-# name: test_entities[switch.mock_title_smart_charge_mode-entry]
+# name: test_entities[switch.mock_title_work_mode_smart_charge_mode-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -113,7 +113,7 @@
     'disabled_by': None,
     'domain': 'switch',
     'entity_category': <EntityCategory.CONFIG: 'config'>,
-    'entity_id': 'switch.mock_title_smart_charge_mode',
+    'entity_id': 'switch.mock_title_work_mode_smart_charge_mode',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -136,20 +136,20 @@
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[switch.mock_title_smart_charge_mode-state]
+# name: test_entities[switch.mock_title_work_mode_smart_charge_mode-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Smart charge mode',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Work mode Smart charge mode',
     }),
     'context': <ANY>,
-    'entity_id': 'switch.mock_title_smart_charge_mode',
+    'entity_id': 'switch.mock_title_work_mode_smart_charge_mode',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': 'off',
   })
 # ---
-# name: test_entities[switch.mock_title_tou_mode-entry]
+# name: test_entities[switch.mock_title_work_mode_tou_mode-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
       None,
@@ -163,7 +163,7 @@
     'disabled_by': None,
     'domain': 'switch',
     'entity_category': <EntityCategory.CONFIG: 'config'>,
-    'entity_id': 'switch.mock_title_tou_mode',
+    'entity_id': 'switch.mock_title_work_mode_tou_mode',
     'has_entity_name': True,
     'hidden_by': None,
     'icon': None,
@@ -186,13 +186,13 @@
     'unit_of_measurement': None,
   })
 # ---
-# name: test_entities[switch.mock_title_tou_mode-state]
+# name: test_entities[switch.mock_title_work_mode_tou_mode-state]
   StateSnapshot({
     'attributes': ReadOnlyDict({
-      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title TOU mode',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Mock Title Work mode TOU mode',
     }),
     'context': <ANY>,
-    'entity_id': 'switch.mock_title_tou_mode',
+    'entity_id': 'switch.mock_title_work_mode_tou_mode',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,

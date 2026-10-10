@@ -30,3 +30,16 @@ Ported from `homeassistant/components/goodwe` in home-assistant/core
 (`dev`, 2026.11.0.dev0) plus the unmerged work-mode switch and zeroconf
 branches of haids3/HASScore. Unique IDs are `{serial}-{key}` throughout; the
 built-in integration's legacy formats were not carried over.
+
+## Sensors
+
+`catalog.py` decides, for each ET runtime sensor ID, its translation key,
+device, entity category and whether it is enabled by default; `strings.json`
+holds the names. A sensor the table doesn't know falls back to the library's
+name, hidden. When the library gains ET sensors, compare the table with
+`ET.sensors()` so none of them fall back by accident.
+
+Codes become enum states in the table (work mode 35187 → Status, grid mode
+35136 → Grid, battery mode 35184 → battery Status). The mappings are ET
+codes; DT and ES reuse some sensor IDs with other meanings, which is why
+the table applies to ET only.

@@ -10,7 +10,7 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
-from custom_components.goodwe_local import CONF_MODEL_FAMILY, DOMAIN
+from custom_components.goodwe_local.const import CONF_MODEL_FAMILY, DOMAIN
 
 from .conftest import TEST_HOST, TEST_PORT
 

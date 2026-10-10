@@ -17,7 +17,7 @@ from homeassistant.core import HomeAssistant
 
 from .conftest import setup_integration
 
-ENTITY_ID = "select.mock_title_inverter_operation_mode"
+ENTITY_ID = "select.mock_title_work_mode_operation_mode"
 
 
 @pytest.fixture

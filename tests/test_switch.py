@@ -31,8 +31,8 @@ from homeassistant.helpers import entity_registry as er
 
 from .conftest import setup_integration
 
-TOU_ENTITY_ID = "switch.mock_title_tou_mode"
-PEAK_SHAVING_ENTITY_ID = "switch.mock_title_peak_shaving_mode"
+TOU_ENTITY_ID = "switch.mock_title_work_mode_tou_mode"
+PEAK_SHAVING_ENTITY_ID = "switch.mock_title_work_mode_peak_shaving_mode"
 
 
 @pytest.fixture

@@ -6,16 +6,16 @@ from goodwe.const import GOODWE_UDP_PORT
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.device_registry import DeviceInfo
 
 from .config_flow import GoodweFlowHandler
-from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, DOMAIN, PLATFORMS
+from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, PLATFORMS
 from .coordinator import (
     GoodweConfigEntry,
     GoodweRuntimeData,
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
 )
+from .entity import build_devices
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bool:
@@ -38,15 +38,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         except InverterError:
             raise ConfigEntryNotReady from err
 
-    device_info = DeviceInfo(
-        configuration_url="https://www.semsportal.com",
-        identifiers={(DOMAIN, inverter.serial_number)},
-        name=entry.title,
-        manufacturer="GoodWe",
-        model=inverter.model_name,
-        sw_version=f"{inverter.firmware} / {inverter.arm_firmware}",
-    )
-
     # Create update coordinator
     coordinator = GoodweUpdateCoordinator(hass, entry, inverter)
 
@@ -59,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         inverter=inverter,
         coordinator=coordinator,
         settings=settings,
-        device_info=device_info,
+        devices=build_devices(entry, inverter),
         # Controls write to real hardware, so they are opt-in
         allow_control=entry.options.get(CONF_ALLOW_CONTROL, False),
     )
