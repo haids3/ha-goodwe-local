@@ -1,8 +1,36 @@
 # serializer version: 1
 # name: test_entities[operation_mode-controls]
   dict({
+    'sensor.mock_title_arm_beta_version': tuple(
+      '2',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_firmware': tuple(
+      'dummy.arm.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_beta_version': tuple(
+      '5',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_firmware': tuple(
+      'dummy.fw.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_master_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_slave_version': tuple(
+      None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'sensor.mock_title_grid_export_limit': tuple(
@@ -17,8 +45,36 @@
 # ---
 # name: test_entities[operation_mode-read_only]
   dict({
+    'sensor.mock_title_arm_beta_version': tuple(
+      '2',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_firmware': tuple(
+      'dummy.arm.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_beta_version': tuple(
+      '5',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_firmware': tuple(
+      'dummy.fw.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_master_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_slave_version': tuple(
+      None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'sensor.mock_title_grid_export_limit': tuple(
@@ -49,8 +105,36 @@
       'on',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
+    'sensor.mock_title_arm_beta_version': tuple(
+      '2',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_firmware': tuple(
+      'dummy.arm.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_beta_version': tuple(
+      '5',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_firmware': tuple(
+      'dummy.fw.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_master_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_slave_version': tuple(
+      None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'sensor.mock_title_grid_export_limit': tuple(
@@ -93,8 +177,36 @@
       'on',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
+    'sensor.mock_title_arm_beta_version': tuple(
+      '2',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_firmware': tuple(
+      'dummy.arm.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_arm_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
     'sensor.mock_title_battery_depth_of_discharge_on_grid': tuple(
       '50',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_beta_version': tuple(
+      '5',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_firmware': tuple(
+      'dummy.fw.version',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_master_version': tuple(
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_dsp_slave_version': tuple(
+      None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'sensor.mock_title_grid_export_limit': tuple(

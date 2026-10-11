@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-from goodwe import Inverter
+from goodwe import BatteryClusterInfo, Inverter
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -55,3 +55,20 @@ def build_devices(
             via_device=(DOMAIN, serial),
         )
     return devices
+
+
+def rack_device_info(
+    entry: ConfigEntry, inverter: Inverter, rack: BatteryClusterInfo
+) -> DeviceInfo:
+    """A battery rack, connected via the battery."""
+    serial = inverter.serial_number
+    return DeviceInfo(
+        identifiers={(DOMAIN, f"{serial}-battery_rack_{rack.index}")},
+        name=f"{entry.title} Battery rack {rack.index}",
+        manufacturer=MANUFACTURER,
+        model="Battery rack",
+        serial_number=rack.serial_number or None,
+        # The rack BMS's master and slave software versions
+        sw_version=f"{rack.master_version} / {rack.slave_version}",
+        via_device=(DOMAIN, f"{serial}-{GoodweDevice.BATTERY}"),
+    )

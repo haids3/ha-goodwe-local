@@ -10,7 +10,7 @@
   "issue_tracker": "https://github.com/haids3/ha-goodwe-local/issues",
   "loggers": ["goodwe"],
   "requirements": [
-    "goodwe @ git+https://github.com/haids3/goodwe.git@caa3bdb"
+    "goodwe @ git+https://github.com/haids3/goodwe.git@2595e0b"
   ],
   "version": "0.1.0",
   "zeroconf": ["_goodwe._tcp.local."]

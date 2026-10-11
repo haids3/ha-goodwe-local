@@ -71,6 +71,15 @@
       "apparent_power": {
         "name": "Apparent power"
       },
+      "arm_beta_version": {
+        "name": "ARM beta version"
+      },
+      "arm_firmware": {
+        "name": "ARM firmware"
+      },
+      "arm_version": {
+        "name": "ARM version"
+      },
       "backup_current": {
         "name": "Backup current"
       },
@@ -104,17 +113,26 @@
       "bms": {
         "name": "BMS"
       },
+      "bms_software_version": {
+        "name": "BMS software version"
+      },
       "bms_status": {
         "name": "BMS status"
       },
       "bus_voltage": {
         "name": "Bus voltage"
       },
+      "cells_in_series": {
+        "name": "Cells in series"
+      },
       "charge_today": {
         "name": "Charge today"
       },
       "charge_total": {
         "name": "Charge total"
+      },
+      "charged_total": {
+        "name": "Charged total"
       },
       "communication_mode": {
         "name": "Communication mode"
@@ -143,6 +161,21 @@
       "discharge_total": {
         "name": "Discharge total"
       },
+      "discharged_total": {
+        "name": "Discharged total"
+      },
+      "dsp_beta_version": {
+        "name": "DSP beta version"
+      },
+      "dsp_firmware": {
+        "name": "DSP firmware"
+      },
+      "dsp_master_version": {
+        "name": "DSP master version"
+      },
+      "dsp_slave_version": {
+        "name": "DSP slave version"
+      },
       "error_code": {
         "name": "Error code"
       },
@@ -157,6 +190,9 @@
       },
       "export_total": {
         "name": "Export total"
+      },
+      "fault_code": {
+        "name": "Fault code"
       },
       "frequency": {
         "name": "Frequency"
@@ -222,6 +258,9 @@
       "max_discharge_current": {
         "name": "Maximum discharge current"
       },
+      "max_temperature": {
+        "name": "Maximum temperature"
+      },
       "meter_2_communication_status": {
         "name": "Meter 2 communication status"
       },
@@ -251,6 +290,9 @@
       },
       "min_cell_voltage_id": {
         "name": "Minimum cell voltage ID"
+      },
+      "min_temperature": {
+        "name": "Minimum temperature"
       },
       "module_temperature": {
         "name": "Module temperature"
@@ -414,6 +456,9 @@
           "to_be_charged": "Waiting to charge",
           "to_be_discharged": "Waiting to discharge"
         }
+      },
+      "status_code": {
+        "name": "Status code"
       },
       "temperature": {
         "name": "Temperature"

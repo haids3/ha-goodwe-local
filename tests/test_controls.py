@@ -48,12 +48,16 @@ async def test_entities(
 
     await setup_integration(hass, config_entry, PLATFORMS)
 
-    assert {
-        entry.entity_id: (hass.states.get(entry.entity_id).state, entry.entity_category)
-        for entry in er.async_entries_for_config_entry(
-            entity_registry, config_entry.entry_id
+    summary = {}
+    for entry in er.async_entries_for_config_entry(
+        entity_registry, config_entry.entry_id
+    ):
+        state = hass.states.get(entry.entity_id)
+        summary[entry.entity_id] = (
+            state.state if state else None,
+            entry.entity_category,
         )
-    } == snapshot
+    assert summary == snapshot
 
 
 @pytest.mark.usefixtures("mock_switches")

@@ -71,6 +71,27 @@
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       False,
     ),
+    'sensor.mock_title_arm_beta_version': tuple(
+      'Mock Title',
+      '2',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_arm_firmware': tuple(
+      'Mock Title',
+      'dummy.arm.version',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_arm_version': tuple(
+      'Mock Title',
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
     'sensor.mock_title_backup_current': tuple(
       'Mock Title',
       '0',
@@ -119,6 +140,13 @@
       None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       False,
+    ),
+    'sensor.mock_title_battery_bms_software_version': tuple(
+      'Mock Title Battery',
+      '0',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
     ),
     'sensor.mock_title_battery_bms_status': tuple(
       'Mock Title Battery',
@@ -192,10 +220,10 @@
     ),
     'sensor.mock_title_battery_hardware_version': tuple(
       'Mock Title Battery',
-      None,
+      '0',
       None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-      False,
+      True,
     ),
     'sensor.mock_title_battery_maximum_cell_temperature': tuple(
       'Mock Title Battery',
@@ -288,13 +316,6 @@
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       False,
     ),
-    'sensor.mock_title_battery_software_version': tuple(
-      'Mock Title Battery',
-      None,
-      None,
-      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-      False,
-    ),
     'sensor.mock_title_battery_state_of_charge': tuple(
       'Mock Title Battery',
       '60',
@@ -380,6 +401,34 @@
       True,
     ),
     'sensor.mock_title_diagnostic_status_code': tuple(
+      'Mock Title',
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_dsp_beta_version': tuple(
+      'Mock Title',
+      '5',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_dsp_firmware': tuple(
+      'Mock Title',
+      'dummy.fw.version',
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
+    'sensor.mock_title_dsp_master_version': tuple(
+      'Mock Title',
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
+    'sensor.mock_title_dsp_slave_version': tuple(
       'Mock Title',
       None,
       None,

@@ -1,5 +1,7 @@
 """The Goodwe inverter component."""
 
+import logging
+
 from goodwe import Inverter, InverterError, connect
 from goodwe.const import GOODWE_UDP_PORT
 
@@ -10,12 +12,15 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .config_flow import GoodweFlowHandler
 from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, PLATFORMS
 from .coordinator import (
+    GoodweBatteryRackCoordinator,
     GoodweConfigEntry,
     GoodweRuntimeData,
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
 )
 from .entity import build_devices
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bool:
@@ -45,12 +50,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
     await coordinator.async_config_entry_first_refresh()
     settings = GoodweSettingsCoordinator(hass, entry, inverter)
     await settings.async_config_entry_first_refresh()
+    racks = await _async_setup_battery_racks(hass, entry, inverter)
 
     entry.runtime_data = GoodweRuntimeData(
         inverter=inverter,
         coordinator=coordinator,
         settings=settings,
         devices=build_devices(entry, inverter),
+        racks=racks,
         # Controls write to real hardware, so they are opt-in
         allow_control=entry.options.get(CONF_ALLOW_CONTROL, False),
     )
@@ -60,6 +67,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
+
+
+async def _async_setup_battery_racks(
+    hass: HomeAssistant, entry: GoodweConfigEntry, inverter: Inverter
+) -> GoodweBatteryRackCoordinator | None:
+    """Find the battery racks; most batteries don't report any."""
+    try:
+        info = await inverter.read_battery_cluster_info()
+    except InverterError:
+        _LOGGER.debug("Could not read battery racks", exc_info=True)
+        return None
+    if not info:
+        return None
+    racks = GoodweBatteryRackCoordinator(hass, entry, inverter, info)
+    await racks.async_config_entry_first_refresh()
+    return racks
 
 
 async def async_check_port(

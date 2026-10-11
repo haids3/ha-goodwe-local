@@ -1,0 +1,211 @@
+# serializer version: 1
+# name: test_racks
+  dict({
+    'Mock Title Battery rack 1': tuple(
+      'Battery rack',
+      'SYNTHRACK0001',
+      '7 / 8',
+      dict({
+        'sensor.mock_title_battery_rack_1_cells_in_series': tuple(
+          None,
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_1_charged_total': tuple(
+          None,
+          'Ah',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_1_current': tuple(
+          '-13.72',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_discharged_total': tuple(
+          None,
+          'Ah',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_1_fault_code': tuple(
+          '0',
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_maximum_cell_voltage': tuple(
+          '3.383',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_maximum_charge_current': tuple(
+          '93.0',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_maximum_discharge_current': tuple(
+          '107.0',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_maximum_temperature': tuple(
+          '27.0',
+          <UnitOfTemperature.CELSIUS: '°C'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_minimum_cell_voltage': tuple(
+          '3.379',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_minimum_temperature': tuple(
+          '25.0',
+          <UnitOfTemperature.CELSIUS: '°C'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_power': tuple(
+          '-1207',
+          <UnitOfPower.WATT: 'W'>,
+          None,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_state_of_charge': tuple(
+          '88.1',
+          '%',
+          None,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_state_of_health': tuple(
+          '100.0',
+          '%',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_1_status_code': tuple(
+          None,
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_1_voltage': tuple(
+          '88.0',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+      }),
+    ),
+    'Mock Title Battery rack 2': tuple(
+      'Battery rack',
+      'SYNTHRACK0002',
+      '7 / 8',
+      dict({
+        'sensor.mock_title_battery_rack_2_cells_in_series': tuple(
+          None,
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_2_charged_total': tuple(
+          None,
+          'Ah',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_2_current': tuple(
+          '-13.5',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_discharged_total': tuple(
+          None,
+          'Ah',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_2_fault_code': tuple(
+          '0',
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_maximum_cell_voltage': tuple(
+          '3.383',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_maximum_charge_current': tuple(
+          '93.0',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_maximum_discharge_current': tuple(
+          '107.0',
+          <UnitOfElectricCurrent.AMPERE: 'A'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_maximum_temperature': tuple(
+          '27.0',
+          <UnitOfTemperature.CELSIUS: '°C'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_minimum_cell_voltage': tuple(
+          '3.379',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_minimum_temperature': tuple(
+          '25.0',
+          <UnitOfTemperature.CELSIUS: '°C'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_power': tuple(
+          '-1188',
+          <UnitOfPower.WATT: 'W'>,
+          None,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_state_of_charge': tuple(
+          '88.1',
+          '%',
+          None,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_state_of_health': tuple(
+          '98.5',
+          '%',
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_status_code': tuple(
+          None,
+          None,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          False,
+        ),
+        'sensor.mock_title_battery_rack_2_voltage': tuple(
+          '88.0',
+          <UnitOfElectricPotential.VOLT: 'V'>,
+          <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+      }),
+    ),
+  })
+# ---

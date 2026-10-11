@@ -172,7 +172,8 @@ async def test_other_family(
             entry.disabled_by is None,
         )
         for unique_id, entry in entries.items()
-        if "-setting_" not in unique_id
+        # Library-named sensors; the others have translated names
+        if entry.translation_key is None
     } == {
         "ppv": ("PV Power", True),
         "bus_voltage": ("Bus Voltage", False),

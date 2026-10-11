@@ -127,8 +127,8 @@ def _battery(prefix: str, device: GoodweDevice) -> dict[str, SensorSpec]:
         f"{prefix}_min_cell_temp_id": _hidden("min_cell_temperature_id", device),
         f"{prefix}_max_cell_voltage_id": _hidden("max_cell_voltage_id", device),
         f"{prefix}_min_cell_voltage_id": _hidden("min_cell_voltage_id", device),
-        f"{prefix}_sw_version": _hidden("software_version", device),
-        f"{prefix}_hw_version": _hidden("hardware_version", device),
+        f"{prefix}_sw_version": _diag("bms_software_version", device),
+        f"{prefix}_hw_version": _diag("hardware_version", device),
     }
 
 

@@ -58,6 +58,8 @@ def fixture_mock_inverter() -> Generator[MagicMock]:
     mock_inverter.get_grid_export_limit = AsyncMock(return_value=10000)
     mock_inverter.get_ongrid_battery_dod = AsyncMock(return_value=50)
     mock_inverter.get_work_mode_switches = AsyncMock(return_value={})
+    mock_inverter.read_battery_cluster_info = AsyncMock(return_value=[])
+    mock_inverter.read_battery_clusters = AsyncMock(return_value=[])
     mock_inverter.get_operation_mode = AsyncMock(return_value=OperationMode.GENERAL)
     mock_inverter.get_operation_modes = AsyncMock(
         return_value=(OperationMode.GENERAL, OperationMode.ECO)

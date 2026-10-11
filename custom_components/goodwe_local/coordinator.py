@@ -5,14 +5,20 @@ from dataclasses import dataclass
 import logging
 from typing import Any, override
 
-from goodwe import Inverter, InverterError, RequestFailedException
+from goodwe import (
+    BatteryCluster,
+    BatteryClusterInfo,
+    Inverter,
+    InverterError,
+    RequestFailedException,
+)
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import SCAN_INTERVAL, SETTINGS_SCAN_INTERVAL
+from .const import BATTERY_RACK_SCAN_INTERVAL, SCAN_INTERVAL, SETTINGS_SCAN_INTERVAL
 from .entity import GoodweDevice
 from .tou import async_read_tou_slots
 
@@ -29,6 +35,7 @@ class GoodweRuntimeData:
     coordinator: GoodweUpdateCoordinator
     settings: GoodweSettingsCoordinator
     devices: dict[GoodweDevice, DeviceInfo]
+    racks: GoodweBatteryRackCoordinator | None
     allow_control: bool
 
 
@@ -175,3 +182,37 @@ class GoodweSettingsCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 data[key] = value
         self.supported = frozenset(data)
         return data
+
+
+class GoodweBatteryRackCoordinator(DataUpdateCoordinator[dict[int, BatteryCluster]]):
+    """Read each battery rack (BMS cluster) of systems built from racks."""
+
+    config_entry: GoodweConfigEntry
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: GoodweConfigEntry,
+        inverter: Inverter,
+        info: list[BatteryClusterInfo],
+    ) -> None:
+        """Initialize the battery rack coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=entry,
+            name=f"{entry.title} battery racks",
+            update_interval=BATTERY_RACK_SCAN_INTERVAL,
+        )
+        self.inverter = inverter
+        # Serial, versions, cells and SOH, read once at setup
+        self.info = {rack.index: rack for rack in info}
+
+    @override
+    async def _async_update_data(self) -> dict[int, BatteryCluster]:
+        """Read the racks' live data."""
+        try:
+            racks = await self.inverter.read_battery_clusters()
+        except InverterError as err:
+            raise UpdateFailed(err) from err
+        return {rack.index: rack for rack in racks}

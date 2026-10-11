@@ -19,6 +19,8 @@ MANUFACTURER = "GoodWe"
 SCAN_INTERVAL = timedelta(seconds=10)
 # Picks up changes made in the GoodWe apps without adding much Modbus traffic
 SETTINGS_SCAN_INTERVAL = timedelta(minutes=5)
+# Six racks are six requests, so they are read less often than the runtime data
+BATTERY_RACK_SCAN_INTERVAL = timedelta(seconds=60)
 
 CONF_MODEL_FAMILY = "model_family"
 CONF_ALLOW_CONTROL = "allow_control"

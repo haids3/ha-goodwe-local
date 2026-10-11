@@ -7,7 +7,7 @@ from decimal import Decimal
 import logging
 from typing import Any, override
 
-from goodwe import Inverter, Sensor, SensorKind
+from goodwe import BatteryCluster, BatteryClusterInfo, Inverter, Sensor, SensorKind
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -43,12 +43,13 @@ from .coordinator import (
     SETTING_GRID_EXPORT_LIMIT,
     SETTING_OPERATION_MODE,
     SETTING_TOU_SLOTS,
+    GoodweBatteryRackCoordinator,
     GoodweConfigEntry,
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
     setting_unit,
 )
-from .entity import GoodweDevice
+from .entity import GoodweDevice, rack_device_info
 from .tou import TouSlot
 
 # Coordinator handles all data updates, so parallel updates are not needed
@@ -239,6 +240,22 @@ async def async_setup_entry(
             TouSlotSensor(settings, device_info, inverter, slot, description)
             for description in TOU_SLOT_FIELDS
         )
+
+    entities.extend(
+        InverterFirmwareSensor(devices[GoodweDevice.INVERTER], inverter, description)
+        for description in FIRMWARE_SENSORS
+    )
+    if (racks := config_entry.runtime_data.racks) is not None:
+        for index, info in racks.info.items():
+            device_info = rack_device_info(config_entry, inverter, info)
+            entities.extend(
+                BatteryRackSensor(racks, device_info, inverter, index, description)
+                for description in RACK_SENSORS
+            )
+            entities.extend(
+                BatteryRackInfoSensor(device_info, inverter, info, description)
+                for description in RACK_INFO_SENSORS
+            )
 
     async_add_entities(entities)
 
@@ -583,3 +600,301 @@ class TouSlotStatusSensor(TouSlotSensor):
             "days": list(slot.days),
             "months": list(slot.months),
         }
+
+
+@dataclass(frozen=True, kw_only=True)
+class GoodweFirmwareSensorEntityDescription(SensorEntityDescription):
+    """Class describing a version the inverter reports when connecting."""
+
+    value: Callable[[Inverter], StateType]
+
+
+FIRMWARE_SENSORS = (
+    GoodweFirmwareSensorEntityDescription(
+        key="dsp_firmware",
+        translation_key="dsp_firmware",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda inverter: inverter.firmware,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="arm_firmware",
+        translation_key="arm_firmware",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda inverter: inverter.arm_firmware,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="dsp_beta_version",
+        translation_key="dsp_beta_version",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda inverter: inverter.dsp_svn_version,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="arm_beta_version",
+        translation_key="arm_beta_version",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda inverter: inverter.arm_svn_version,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="dsp_master_version",
+        translation_key="dsp_master_version",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda inverter: inverter.dsp1_version,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="dsp_slave_version",
+        translation_key="dsp_slave_version",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda inverter: inverter.dsp2_version,
+    ),
+    GoodweFirmwareSensorEntityDescription(
+        key="arm_version",
+        translation_key="arm_version",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda inverter: inverter.arm_version,
+    ),
+)
+
+
+class InverterFirmwareSensor(SensorEntity):
+    """A version the inverter reported when Home Assistant connected."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    entity_description: GoodweFirmwareSensorEntityDescription
+
+    def __init__(
+        self,
+        device_info: DeviceInfo,
+        inverter: Inverter,
+        description: GoodweFirmwareSensorEntityDescription,
+    ) -> None:
+        """Initialize the firmware sensor."""
+        self.entity_description = description
+        self._attr_unique_id = f"{inverter.serial_number}-{description.key}"
+        self._attr_device_info = device_info
+        self._attr_native_value = description.value(inverter)
+
+
+@dataclass(frozen=True, kw_only=True)
+class BatteryRackSensorEntityDescription(SensorEntityDescription):
+    """Class describing a live reading of a battery rack."""
+
+    value: Callable[[BatteryCluster], StateType]
+
+
+def _rack_power(rack: BatteryCluster) -> int:
+    # Positive while discharging, like the battery's power
+    return round(rack.voltage * rack.current)
+
+
+RACK_SENSORS = (
+    BatteryRackSensorEntityDescription(
+        key="soc",
+        translation_key="state_of_charge",
+        device_class=SensorDeviceClass.BATTERY,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=PERCENTAGE,
+        value=lambda rack: rack.soc,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="power",
+        translation_key="battery_power",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfPower.WATT,
+        value=_rack_power,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="current",
+        translation_key="current",
+        device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.current,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="voltage",
+        translation_key="voltage",
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.voltage,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="max_temperature",
+        translation_key="max_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.max_temperature,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="min_temperature",
+        translation_key="min_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.min_temperature,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="max_cell_voltage",
+        translation_key="max_cell_voltage",
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.max_cell_voltage,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="min_cell_voltage",
+        translation_key="min_cell_voltage",
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.min_cell_voltage,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="charge_current_limit",
+        translation_key="max_charge_current",
+        device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.charge_current_limit,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="discharge_current_limit",
+        translation_key="max_discharge_current",
+        device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.discharge_current_limit,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="fault_code",
+        translation_key="fault_code",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda rack: rack.fault,
+    ),
+    # The codes' meanings are not documented
+    BatteryRackSensorEntityDescription(
+        key="status_code",
+        translation_key="status_code",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda rack: rack.status,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="charged_total",
+        translation_key="charged_total",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        native_unit_of_measurement="Ah",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda rack: rack.charged_total,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="discharged_total",
+        translation_key="discharged_total",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        native_unit_of_measurement="Ah",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda rack: rack.discharged_total,
+    ),
+)
+
+
+class BatteryRackSensor(CoordinatorEntity[GoodweBatteryRackCoordinator], SensorEntity):
+    """A live reading of one battery rack."""
+
+    _attr_has_entity_name = True
+    entity_description: BatteryRackSensorEntityDescription
+
+    def __init__(
+        self,
+        coordinator: GoodweBatteryRackCoordinator,
+        device_info: DeviceInfo,
+        inverter: Inverter,
+        index: int,
+        description: BatteryRackSensorEntityDescription,
+    ) -> None:
+        """Initialize the battery rack sensor."""
+        super().__init__(coordinator)
+        self.entity_description = description
+        self._attr_unique_id = (
+            f"{inverter.serial_number}-battery_rack_{index}_{description.key}"
+        )
+        self._attr_device_info = device_info
+        self._index = index
+
+    @property
+    @override
+    def available(self) -> bool:
+        """Return whether the rack reported this time."""
+        return super().available and self._index in self.coordinator.data
+
+    @property
+    @override
+    def native_value(self) -> StateType:
+        """Return the rack's reading."""
+        if (rack := self.coordinator.data.get(self._index)) is None:
+            return None
+        return self.entity_description.value(rack)
+
+
+@dataclass(frozen=True, kw_only=True)
+class BatteryRackInfoSensorEntityDescription(SensorEntityDescription):
+    """Class describing a fixed detail of a battery rack."""
+
+    value: Callable[[BatteryClusterInfo], StateType]
+
+
+RACK_INFO_SENSORS = (
+    BatteryRackInfoSensorEntityDescription(
+        key="soh",
+        translation_key="state_of_health",
+        native_unit_of_measurement=PERCENTAGE,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value=lambda info: info.soh,
+    ),
+    BatteryRackInfoSensorEntityDescription(
+        key="cells_in_series",
+        translation_key="cells_in_series",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value=lambda info: info.cells_in_series,
+    ),
+)
+
+
+class BatteryRackInfoSensor(SensorEntity):
+    """A detail of one battery rack, read when Home Assistant connected."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    entity_description: BatteryRackInfoSensorEntityDescription
+
+    def __init__(
+        self,
+        device_info: DeviceInfo,
+        inverter: Inverter,
+        info: BatteryClusterInfo,
+        description: BatteryRackInfoSensorEntityDescription,
+    ) -> None:
+        """Initialize the battery rack detail sensor."""
+        self.entity_description = description
+        self._attr_unique_id = (
+            f"{inverter.serial_number}-battery_rack_{info.index}_{description.key}"
+        )
+        self._attr_device_info = device_info
+        self._attr_native_value = description.value(info)

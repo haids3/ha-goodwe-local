@@ -32,6 +32,13 @@ bit and NUL-padded model names.
   sensors are shown by default; the remaining register readings exist but are
   disabled. Other families keep the library's names, with the main sensors
   shown.
+- **Battery racks.** Batteries built from racks (BMS clusters), such as the
+  All-in-One, get a device per rack with its state of charge, power,
+  current, voltage, temperatures, cell voltages, current limits, fault code
+  and state of health, read every minute.
+- **Firmware versions** as diagnostic sensors: the DSP and ARM internal
+  versions and beta numbers, and the BMS software version. Checking for
+  and installing updates is left to the GoodWe app or SEMS+.
 - **Signs as Home Assistant expects.** Grid power is positive while
   importing, and battery power positive while discharging.
 - Zeroconf discovery of GoodWe WiFi/LAN dongles (`_goodwe._tcp`).
