@@ -309,6 +309,9 @@
       "on_grid_load_power": {
         "name": "On-grid load power"
       },
+      "on_grid_point_rated_protection": {
+        "name": "On-grid point rated protection"
+      },
       "operating_hours": {
         "name": "Operating hours"
       },

@@ -112,6 +112,7 @@ SETTING_BATTERY_DISCHARGE_DEPTH = "battery_discharge_depth"
 SETTING_WORK_MODE_SWITCHES = "work_mode_switches"
 SETTING_OPERATION_MODE = "operation_mode"
 SETTING_TOU_SLOTS = "tou_slots"
+SETTING_GRID_INPUT_CURRENT_LIMIT = "grid_input_current_limit"
 
 _SETTINGS: dict[str, Callable[[Inverter], Awaitable[Any]]] = {
     SETTING_GRID_EXPORT_LIMIT: lambda inv: inv.get_grid_export_limit(),
@@ -119,6 +120,9 @@ _SETTINGS: dict[str, Callable[[Inverter], Awaitable[Any]]] = {
     SETTING_WORK_MODE_SWITCHES: lambda inv: inv.get_work_mode_switches(),
     SETTING_OPERATION_MODE: lambda inv: inv.get_operation_mode(),
     SETTING_TOU_SLOTS: async_read_tou_slots,
+    SETTING_GRID_INPUT_CURRENT_LIMIT: lambda inv: inv.read_setting(
+        "grid_input_current_limit"
+    ),
 }
 
 

@@ -638,6 +638,13 @@
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       False,
     ),
+    'sensor.mock_title_on_grid_point_rated_protection': tuple(
+      'Mock Title',
+      '62',
+      <UnitOfElectricCurrent.AMPERE: 'A'>,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      True,
+    ),
     'sensor.mock_title_operating_hours': tuple(
       'Mock Title',
       '0',

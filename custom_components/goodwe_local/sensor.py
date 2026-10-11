@@ -41,6 +41,7 @@ from .const import MODE_TO_OPTION
 from .coordinator import (
     SETTING_BATTERY_DISCHARGE_DEPTH,
     SETTING_GRID_EXPORT_LIMIT,
+    SETTING_GRID_INPUT_CURRENT_LIMIT,
     SETTING_OPERATION_MODE,
     SETTING_TOU_SLOTS,
     GoodweBatteryRackCoordinator,
@@ -198,6 +199,14 @@ SETTING_SENSORS = (
         device_class=SensorDeviceClass.ENUM,
         options=list(MODE_TO_OPTION.values()),
         value=MODE_TO_OPTION.get,
+    ),
+    GoodweSettingSensorEntityDescription(
+        key=SETTING_GRID_INPUT_CURRENT_LIMIT,
+        translation_key="on_grid_point_rated_protection",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        device=GoodweDevice.INVERTER,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
     ),
 )
 

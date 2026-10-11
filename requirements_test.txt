@@ -1,4 +1,4 @@
-goodwe @ git+https://github.com/haids3/goodwe.git@2595e0b
+goodwe @ git+https://github.com/haids3/goodwe.git@77c97ab
 pytest-homeassistant-custom-component==0.13.344
 syrupy
 ruff

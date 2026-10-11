@@ -37,6 +37,10 @@
       '10000',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
+    'sensor.mock_title_on_grid_point_rated_protection': tuple(
+      '62',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
     'sensor.mock_title_work_mode_operation_mode': tuple(
       'general',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
@@ -79,6 +83,10 @@
     ),
     'sensor.mock_title_grid_export_limit': tuple(
       '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_on_grid_point_rated_protection': tuple(
+      '62',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'sensor.mock_title_work_mode_operation_mode': tuple(
@@ -139,6 +147,10 @@
     ),
     'sensor.mock_title_grid_export_limit': tuple(
       '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_on_grid_point_rated_protection': tuple(
+      '62',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
     'switch.mock_title_work_mode_backup_mode': tuple(
@@ -211,6 +223,10 @@
     ),
     'sensor.mock_title_grid_export_limit': tuple(
       '10000',
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    ),
+    'sensor.mock_title_on_grid_point_rated_protection': tuple(
+      '62',
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
     ),
   })

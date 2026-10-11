@@ -41,6 +41,9 @@
       "grid_export_limit": {
         "default": "mdi:transmission-tower"
       },
+      "on_grid_point_rated_protection": {
+        "default": "mdi:transmission-tower-import"
+      },
       "operation_mode": {
         "default": "mdi:solar-power"
       },
