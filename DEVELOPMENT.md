@@ -52,3 +52,16 @@ the high byte of the group's third register). Anything with a value is
 read-only here. Don't add numbers, selects, times or schedule writes; SEMS+
 or the app validate those before they reach the inverter, a Modbus write
 does not.
+
+Verified on a work mode 3.0 EHA (2026-10-12): TOU slot on/off, TOU mode and
+backup mode; each acts at once. Smart charge and peak shaving are untested,
+because the shared group (47589) must already hold their schedule. The
+inverter can read a backup write back a moment late, so a switch shows what
+it wrote until a read agrees, or until a read 30 seconds later.
+
+## CI
+
+Lint and Test run on every push to `main`. Validate (manual) runs HACS,
+which passes, and hassfest, which fails: it rejects the git requirement
+(`goodwe @ git+https://…`, "contains a space"). Only a PyPI release of the
+library would fix that.
