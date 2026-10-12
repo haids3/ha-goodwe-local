@@ -5,12 +5,18 @@ import logging
 from goodwe import Inverter, InverterError, connect
 from goodwe.const import GOODWE_UDP_PORT
 
-from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .config_flow import GoodweFlowHandler
-from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, PLATFORMS
+from .const import (
+    CONF_ALLOW_CONTROL,
+    CONF_MODEL_FAMILY,
+    CONF_SHOW_SETTINGS,
+    PLATFORMS,
+)
 from .coordinator import (
     GoodweBatteryRackCoordinator,
     GoodweConfigEntry,
@@ -18,7 +24,7 @@ from .coordinator import (
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
 )
-from .entity import build_devices
+from .entity import GoodweDevice, build_devices
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,8 +54,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
 
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_config_entry_first_refresh()
-    settings = GoodweSettingsCoordinator(hass, entry, inverter)
-    await settings.async_config_entry_first_refresh()
+    # Controls are opt-in because they write to real hardware; settings
+    # because they lag the inverter and the GoodWe cloud
+    allow_control = entry.options.get(CONF_ALLOW_CONTROL, False)
+    show_settings = entry.options.get(CONF_SHOW_SETTINGS, False)
+    settings: GoodweSettingsCoordinator | None = None
+    if allow_control or show_settings:
+        settings = GoodweSettingsCoordinator(hass, entry, inverter)
+        await settings.async_config_entry_first_refresh()
     racks = await _async_setup_battery_racks(hass, entry, inverter)
 
     entry.runtime_data = GoodweRuntimeData(
@@ -58,15 +70,48 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         settings=settings,
         devices=build_devices(hass, entry, inverter),
         racks=racks,
-        # Controls write to real hardware, so they are opt-in
-        allow_control=entry.options.get(CONF_ALLOW_CONTROL, False),
+        allow_control=allow_control,
+        show_settings=show_settings,
     )
+    _async_remove_hidden_entities(hass, entry)
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
+
+
+def _async_remove_hidden_entities(
+    hass: HomeAssistant, entry: GoodweConfigEntry
+) -> None:
+    """Remove the entities of options turned off, rather than leave them unavailable."""
+    runtime_data = entry.runtime_data
+    serial = runtime_data.inverter.serial_number
+    entity_registry = er.async_get(hass)
+    for entity in er.async_entries_for_config_entry(entity_registry, entry.entry_id):
+        key = entity.unique_id.removeprefix(f"{serial}-")
+        if (entity.domain == Platform.SWITCH and not runtime_data.allow_control) or (
+            not runtime_data.show_settings and _is_setting_entity(entity.domain, key)
+        ):
+            entity_registry.async_remove(entity.entity_id)
+    if runtime_data.allow_control or runtime_data.show_settings:
+        return
+    device_registry = dr.async_get(hass)
+    (identifier,) = runtime_data.devices[GoodweDevice.WORK_MODE]["identifiers"]
+    if device := device_registry.async_get_device_by_identifier(
+        identifier, entry.entry_id
+    ):
+        device_registry.async_update_device(
+            device.id, remove_config_entry_id=entry.entry_id
+        )
+
+
+def _is_setting_entity(domain: str, key: str) -> bool:
+    """Whether an entity shows a stored inverter setting."""
+    return domain == Platform.BINARY_SENSOR or (
+        domain == Platform.SENSOR and key.startswith(("setting_", "tou_slot_"))
+    )
 
 
 async def _async_setup_battery_racks(

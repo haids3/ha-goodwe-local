@@ -17,7 +17,13 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
-from .const import CONF_ALLOW_CONTROL, CONF_MODEL_FAMILY, DEFAULT_NAME, DOMAIN
+from .const import (
+    CONF_ALLOW_CONTROL,
+    CONF_MODEL_FAMILY,
+    CONF_SHOW_SETTINGS,
+    DEFAULT_NAME,
+    DOMAIN,
+)
 
 CONFIG_SCHEMA = vol.Schema(
     {
@@ -27,6 +33,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 OPTIONS_SCHEMA = vol.Schema(
     {
+        vol.Required(CONF_SHOW_SETTINGS, default=False): bool,
         vol.Required(CONF_ALLOW_CONTROL, default=False): bool,
     }
 )

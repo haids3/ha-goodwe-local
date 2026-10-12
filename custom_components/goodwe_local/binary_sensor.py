@@ -39,9 +39,10 @@ async def async_setup_entry(
     config_entry: GoodweConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up the work mode states, shown whether or not controls are allowed."""
+    """Set up the work mode states when the stored settings are shown."""
     runtime_data = config_entry.runtime_data
-    settings = runtime_data.settings
+    if not runtime_data.show_settings or (settings := runtime_data.settings) is None:
+        return
     async_add_entities(
         InverterWorkModeBinarySensor(
             settings,

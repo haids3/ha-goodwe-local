@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant
 from custom_components.goodwe_local.const import (
     CONF_ALLOW_CONTROL,
     CONF_MODEL_FAMILY,
+    CONF_SHOW_SETTINGS,
     DOMAIN,
 )
 
@@ -98,13 +99,22 @@ def allow_control() -> bool:
 
 
 @pytest.fixture
-def config_entry(allow_control: bool) -> MockConfigEntry:
+def show_settings() -> bool:
+    """Whether the entry shows the stored settings; on, unlike a new entry."""
+    return True
+
+
+@pytest.fixture
+def config_entry(allow_control: bool, show_settings: bool) -> MockConfigEntry:
     """Return a GoodWe config entry."""
     return MockConfigEntry(
         version=2,
         domain=DOMAIN,
         data={CONF_HOST: TEST_HOST, CONF_PORT: TEST_PORT, CONF_MODEL_FAMILY: "ET"},
-        options={CONF_ALLOW_CONTROL: allow_control},
+        options={
+            CONF_ALLOW_CONTROL: allow_control,
+            CONF_SHOW_SETTINGS: show_settings,
+        },
     )
 
 

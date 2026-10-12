@@ -233,23 +233,8 @@ async def async_setup_entry(
         entities.append(
             InverterSensor(coordinator, devices[spec.device], inverter, sensor, spec)
         )
-    # Settings show read-only whether or not controls are allowed
-    entities.extend(
-        InverterSettingSensor(
-            settings, devices[description.device], description, inverter
-        )
-        for description in SETTING_SENSORS
-        if description.key in settings.supported
-    )
-    for slot in settings.data.get(SETTING_TOU_SLOTS, {}).values():
-        device_info = devices[GoodweDevice.WORK_MODE]
-        entities.append(
-            TouSlotStatusSensor(settings, device_info, inverter, slot, TOU_SLOT_STATUS)
-        )
-        entities.extend(
-            TouSlotSensor(settings, device_info, inverter, slot, description)
-            for description in TOU_SLOT_FIELDS
-        )
+    if config_entry.runtime_data.show_settings and settings is not None:
+        entities.extend(_setting_sensors(settings, devices, inverter))
 
     entities.extend(
         InverterFirmwareSensor(devices[GoodweDevice.INVERTER], inverter, description)
@@ -396,6 +381,31 @@ class InverterSensor(CoordinatorEntity[GoodweUpdateCoordinator], SensorEntity):
         if self._sensor.id_ in DAILY_RESET and self._stop_reset is not None:
             self._stop_reset()
         await super().async_will_remove_from_hass()
+
+
+def _setting_sensors(
+    settings: GoodweSettingsCoordinator,
+    devices: dict[GoodweDevice, DeviceInfo],
+    inverter: Inverter,
+) -> list[SensorEntity]:
+    """Create the read-only views of the stored settings and TOU slots."""
+    entities: list[SensorEntity] = [
+        InverterSettingSensor(
+            settings, devices[description.device], description, inverter
+        )
+        for description in SETTING_SENSORS
+        if description.key in settings.supported
+    ]
+    device_info = devices[GoodweDevice.WORK_MODE]
+    for slot in settings.data.get(SETTING_TOU_SLOTS, {}).values():
+        entities.append(
+            TouSlotStatusSensor(settings, device_info, inverter, slot, TOU_SLOT_STATUS)
+        )
+        entities.extend(
+            TouSlotSensor(settings, device_info, inverter, slot, description)
+            for description in TOU_SLOT_FIELDS
+        )
+    return entities
 
 
 class InverterSettingSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
@@ -552,7 +562,7 @@ TOU_SLOT_FIELDS = (
 
 
 class TouSlotSensor(CoordinatorEntity[GoodweSettingsCoordinator], SensorEntity):
-    """One field of a TOU slot, read-only so it shows with controls off.
+    """One field of a TOU slot, read-only, shown with the stored settings.
 
     Names start "TOU slot N", so a slot's sensors sort together on the work
     mode device, next to the slot's switch. Unused slots start disabled.

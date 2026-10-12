@@ -44,6 +44,16 @@ Codes become enum states in the table (work mode 35187 → Status, grid mode
 codes; DT and ES reuse some sensor IDs with other meanings, which is why
 the table applies to ET only.
 
+## Options
+
+Both options are off by default, so a new entry shows readings only.
+*Show stored settings* adds the read-only settings and TOU slot sensors and
+the work mode binary sensors; *Allow controls* adds the switches, after a
+warning that points to SEMS+. The settings area is read only while one of
+them is on. The inverter's stored settings sync with the cloud only now and
+then, so they are not a source of truth; SEMS+ is the place to see and change
+settings. Turning an option off removes its entities from the registry.
+
 ## Writes
 
 The integration only turns things on or off, by design: the work mode

@@ -1,4 +1,4 @@
-"""Test the GoodWe controls option and the read-only settings."""
+"""Test the GoodWe controls and settings options."""
 
 from unittest.mock import MagicMock
 
@@ -9,13 +9,20 @@ from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-from custom_components.goodwe_local.const import CONF_ALLOW_CONTROL, PLATFORMS
+from custom_components.goodwe_local.const import (
+    CONF_ALLOW_CONTROL,
+    CONF_SHOW_SETTINGS,
+    DOMAIN,
+    PLATFORMS,
+)
 
 from .conftest import setup_integration
 
 SWITCH_ENTITY_ID = "switch.mock_title_work_mode_tou_mode"
+BINARY_SENSOR_ENTITY_ID = "binary_sensor.mock_title_work_mode_tou_mode"
+SETTING_ENTITY_ID = "sensor.mock_title_work_mode_tou_slot_1_status"
 
 V3_SWITCHES = {
     WorkModeSwitch.BACKUP: True,
@@ -26,8 +33,13 @@ V3_SWITCHES = {
 
 
 @pytest.mark.parametrize(
-    "allow_control",
-    [pytest.param(False, id="read_only"), pytest.param(True, id="controls")],
+    ("show_settings", "allow_control"),
+    [
+        pytest.param(False, False, id="readings"),
+        pytest.param(True, False, id="settings"),
+        pytest.param(False, True, id="controls"),
+        pytest.param(True, True, id="settings_and_controls"),
+    ],
 )
 @pytest.mark.parametrize(
     "work_mode_switches",
@@ -44,7 +56,7 @@ async def test_entities(
     work_mode_switches: dict[WorkModeSwitch, bool],
     snapshot: SnapshotAssertion,
 ) -> None:
-    """Test settings always show read-only, and controls only when allowed."""
+    """Test settings and controls show only when their option is on."""
     mock_inverter.get_work_mode_switches.return_value = work_mode_switches
 
     await setup_integration(hass, config_entry, PLATFORMS)
@@ -61,40 +73,66 @@ async def test_entities(
     assert summary == snapshot
 
 
+@pytest.mark.parametrize("show_settings", [False])
+async def test_readings_only_skip_settings(
+    hass: HomeAssistant,
+    mock_inverter: MagicMock,
+    config_entry: MockConfigEntry,
+) -> None:
+    """Test the settings aren't read when nothing shows them."""
+    await setup_integration(hass, config_entry, PLATFORMS)
+
+    mock_inverter.get_grid_export_limit.assert_not_called()
+    mock_inverter.get_work_mode_switches.assert_not_called()
+
+
 @pytest.mark.usefixtures("mock_switches")
 async def test_allow_control_option(
     hass: HomeAssistant,
-    entity_registry: er.EntityRegistry,
     config_entry: MockConfigEntry,
 ) -> None:
-    """Test allowing controls in the options adds them without a restart."""
+    """Test allowing controls in the options adds them after a warning."""
     await setup_integration(hass, config_entry, PLATFORMS)
     assert hass.states.get(SWITCH_ENTITY_ID) is None
 
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {CONF_ALLOW_CONTROL: True}
+        result["flow_id"], {CONF_SHOW_SETTINGS: True, CONF_ALLOW_CONTROL: True}
     )
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "confirm_control"
     # Nothing changes until the warning is accepted
-    assert config_entry.options == {CONF_ALLOW_CONTROL: False}
+    assert config_entry.options[CONF_ALLOW_CONTROL] is False
 
     await hass.config_entries.options.async_configure(result["flow_id"], {})
     await hass.async_block_till_done()
 
-    assert config_entry.options == {CONF_ALLOW_CONTROL: True}
+    assert config_entry.options == {
+        CONF_SHOW_SETTINGS: True,
+        CONF_ALLOW_CONTROL: True,
+    }
     assert hass.states.get(SWITCH_ENTITY_ID)
-    # The read-only view stays, so turning controls on or off removes nothing
-    assert hass.states.get("binary_sensor.mock_title_work_mode_tou_mode")
+    assert hass.states.get(BINARY_SENSOR_ENTITY_ID)
 
 
 @pytest.mark.parametrize(
     ("allow_control", "user_input"),
     [
-        pytest.param(True, {CONF_ALLOW_CONTROL: True}, id="keep_on"),
-        pytest.param(True, {CONF_ALLOW_CONTROL: False}, id="turn_off"),
-        pytest.param(False, {CONF_ALLOW_CONTROL: False}, id="keep_off"),
+        pytest.param(
+            True,
+            {CONF_SHOW_SETTINGS: True, CONF_ALLOW_CONTROL: True},
+            id="keep_controls",
+        ),
+        pytest.param(
+            True,
+            {CONF_SHOW_SETTINGS: True, CONF_ALLOW_CONTROL: False},
+            id="remove_controls",
+        ),
+        pytest.param(
+            False,
+            {CONF_SHOW_SETTINGS: False, CONF_ALLOW_CONTROL: False},
+            id="hide_settings",
+        ),
     ],
 )
 @pytest.mark.usefixtures("mock_switches")
@@ -114,3 +152,37 @@ async def test_options_without_warning(
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert config_entry.options == user_input
+
+
+@pytest.mark.parametrize("allow_control", [True])
+@pytest.mark.usefixtures("mock_switches")
+async def test_turning_options_off_removes_entities(
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    device_registry: dr.DeviceRegistry,
+    mock_inverter: MagicMock,
+    config_entry: MockConfigEntry,
+) -> None:
+    """Test entities of an option turned off are removed, not left unavailable."""
+    await setup_integration(hass, config_entry, PLATFORMS)
+    work_mode_device = (DOMAIN, f"{mock_inverter.serial_number}-work_mode")
+    assert device_registry.async_get_device_by_identifier(
+        work_mode_device, config_entry.entry_id
+    )
+
+    hass.config_entries.async_update_entry(
+        config_entry,
+        options={CONF_SHOW_SETTINGS: False, CONF_ALLOW_CONTROL: False},
+    )
+    await hass.async_block_till_done()
+
+    for entity_id in (SWITCH_ENTITY_ID, BINARY_SENSOR_ENTITY_ID, SETTING_ENTITY_ID):
+        assert entity_registry.async_get(entity_id) is None
+    assert (
+        device_registry.async_get_device_by_identifier(
+            work_mode_device, config_entry.entry_id
+        )
+        is None
+    )
+    # Other entities stay
+    assert entity_registry.async_get("sensor.mock_title_arm_firmware")

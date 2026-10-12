@@ -24,6 +24,7 @@ BATTERY_RACK_SCAN_INTERVAL = timedelta(seconds=60)
 
 CONF_MODEL_FAMILY = "model_family"
 CONF_ALLOW_CONTROL = "allow_control"
+CONF_SHOW_SETTINGS = "show_settings"
 
 MODE_TO_OPTION: dict[OperationMode, str] = {
     OperationMode.GENERAL: "general",

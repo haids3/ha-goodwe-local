@@ -13,25 +13,30 @@ bit and NUL-padded model names.
 
 ## Differences from the built-in integration
 
-- **Fast readings; control through SEMS+.** GoodWe Local is meant for
-  quickly updated readings. Settings (export limit, depth of discharge,
-  operation mode, work modes and TOU slots) are shown read-only. To change
-  them, use the [SEMS+ integration](https://github.com/haids3/ha-sems-plus),
-  which keeps the GoodWe app, the SEMS portal and Home Assistant in sync; a
-  local write reaches the app and portal only much later (see below), so
-  the interfaces can disagree in the meantime.
+- **Fast readings; settings and control through SEMS+.** GoodWe Local is
+  meant for quickly updated readings, and by default shows nothing else. To
+  see or change settings, use the
+  [SEMS+ integration](https://github.com/haids3/ha-sems-plus), which keeps
+  the GoodWe app, the SEMS portal and Home Assistant in sync. The inverter's
+  own copy of its settings syncs with the cloud only now and then (see
+  below), so it is no source of truth for automations.
+- **Stored settings, read-only, when asked for.** Turning on *Show stored
+  settings* in the integration's options adds read-only sensors for the
+  export limit, depth of discharge, operation mode, work modes and TOU
+  slots. They are read every 5 minutes, and only while this option or
+  controls are on.
 - **Only on/off over Modbus, and only when allowed.** Turning on *Allow
   controls* in the integration's options, after a warning, adds switches
   for the work modes and for TOU slots already set up, and nothing else: a
   raw register write has no validation, so values such as limits, powers
   and times are left to the GoodWe app or SEMS+, which check them. A slot
   switch writes only the slot's on/off byte, after reading the slot again.
-  The read-only entities stay whether controls are on or off.
+  Turning either option off removes its entities.
 - **Changes act at once; stored settings sync slowly.** A switch here, in the
   GoodWe app or in SEMS+ takes effect on the inverter straight away. The
   stored settings sync between the inverter and the cloud only now and then,
-  with delays from a few minutes to over an hour. Settings are read every 5
-  minutes, but after a change in the app or SEMS+ they can show the old
+  with delays from a few minutes to over an hour. After a change in the app
+  or SEMS+, the stored settings and switches here can show the old
   values for a while, and SEMS+ can lag changes made here the same way. A
   switch shows the state it wrote for up to 30 seconds, since the inverter
   can take a moment to read it back.

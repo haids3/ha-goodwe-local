@@ -33,10 +33,12 @@ class GoodweRuntimeData:
 
     inverter: Inverter
     coordinator: GoodweUpdateCoordinator
-    settings: GoodweSettingsCoordinator
+    # Read only when settings are shown or controls are allowed
+    settings: GoodweSettingsCoordinator | None
     devices: dict[GoodweDevice, DeviceInfo]
     racks: GoodweBatteryRackCoordinator | None
     allow_control: bool
+    show_settings: bool
 
 
 class GoodweUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):

@@ -47,9 +47,8 @@ async def async_setup_entry(
 ) -> None:
     """Set up the inverter work mode switches from a config entry."""
     runtime_data = config_entry.runtime_data
-    if not runtime_data.allow_control:
+    if not runtime_data.allow_control or (settings := runtime_data.settings) is None:
         return
-    settings = runtime_data.settings
     device_info = runtime_data.devices[GoodweDevice.WORK_MODE]
     entities: list[SwitchEntity] = [
         InverterWorkModeSwitchEntity(

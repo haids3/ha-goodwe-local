@@ -555,10 +555,12 @@
     "step": {
       "init": {
         "data": {
-          "allow_control": "Allow controls"
+          "allow_control": "Allow controls",
+          "show_settings": "Show stored settings"
         },
         "data_description": {
-          "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Not recommended: use the SEMS+ integration for control instead."
+          "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Not recommended: use the SEMS+ integration for control instead.",
+          "show_settings": "Show the work modes, TOU slots, export limit and other settings as read-only sensors. The inverter's stored copy can lag changes made in the GoodWe app or SEMS portal by minutes to over an hour, so don't rely on these in automations; the SEMS+ integration shows the settings the cloud holds."
         },
         "title": "GoodWe options"
       },
