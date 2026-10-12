@@ -15,6 +15,7 @@ from homeassistant.core import HomeAssistant
 
 from custom_components.goodwe_local.const import (
     CONF_ALLOW_CONTROL,
+    CONF_CHECK_FIRMWARE,
     CONF_MODEL_FAMILY,
     CONF_SHOW_SETTINGS,
     DOMAIN,
@@ -105,7 +106,15 @@ def show_settings() -> bool:
 
 
 @pytest.fixture
-def config_entry(allow_control: bool, show_settings: bool) -> MockConfigEntry:
+def check_firmware() -> bool:
+    """Whether the entry checks for firmware updates; on, as for a new entry."""
+    return True
+
+
+@pytest.fixture
+def config_entry(
+    allow_control: bool, show_settings: bool, check_firmware: bool
+) -> MockConfigEntry:
     """Return a GoodWe config entry."""
     return MockConfigEntry(
         version=2,
@@ -114,6 +123,7 @@ def config_entry(allow_control: bool, show_settings: bool) -> MockConfigEntry:
         options={
             CONF_ALLOW_CONTROL: allow_control,
             CONF_SHOW_SETTINGS: show_settings,
+            CONF_CHECK_FIRMWARE: check_firmware,
         },
     )
 

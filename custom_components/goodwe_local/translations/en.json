@@ -541,6 +541,11 @@
       "work_mode_tou": {
         "name": "TOU mode"
       }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   },
   "exceptions": {
@@ -556,10 +561,12 @@
       "init": {
         "data": {
           "allow_control": "Allow controls",
+          "check_firmware": "Check for firmware updates",
           "show_settings": "Show stored settings"
         },
         "data_description": {
           "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Not recommended: use the SEMS+ integration for control instead.",
+          "check_firmware": "Once a day, send the inverter's serial number and firmware versions to GoodWe to ask whether newer firmware exists, as the GoodWe app does. This is the only feature that contacts GoodWe; it uses an undocumented service that may stop working. Updates are installed with the GoodWe app or by your installer.",
           "show_settings": "Show the work modes, TOU slots, export limit and other settings as read-only sensors. The inverter's stored copy can lag changes made in the GoodWe app or SEMS portal by minutes to over an hour, so don't rely on these in automations; the SEMS+ integration shows the settings the cloud holds."
         },
         "title": "GoodWe options"

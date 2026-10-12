@@ -13,6 +13,7 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from custom_components.goodwe_local.const import (
     CONF_ALLOW_CONTROL,
+    CONF_CHECK_FIRMWARE,
     CONF_SHOW_SETTINGS,
     DOMAIN,
     PLATFORMS,
@@ -109,6 +110,7 @@ async def test_allow_control_option(
 
     assert config_entry.options == {
         CONF_SHOW_SETTINGS: True,
+        CONF_CHECK_FIRMWARE: True,
         CONF_ALLOW_CONTROL: True,
     }
     assert hass.states.get(SWITCH_ENTITY_ID)
@@ -151,7 +153,8 @@ async def test_options_without_warning(
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert config_entry.options == user_input
+    # The firmware check defaults to on
+    assert config_entry.options == {**user_input, CONF_CHECK_FIRMWARE: True}
 
 
 @pytest.mark.parametrize("allow_control", [True])

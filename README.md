@@ -1,7 +1,8 @@
 # GoodWe Local for Home Assistant
 
 A Home Assistant integration that talks to GoodWe inverters directly over the
-local network (Modbus over UDP 8899 or TCP 502), without the cloud. It is a
+local network (Modbus over UDP 8899 or TCP 502), without the cloud (apart
+from an optional daily firmware update check). It is a
 custom-component fork of Home Assistant's built-in
 [GoodWe integration](https://www.home-assistant.io/integrations/goodwe), using
 the domain `goodwe_local` so it can run side by side with the built-in one.
@@ -54,8 +55,14 @@ bit and NUL-padded model names.
   current, voltage, temperatures, cell voltages, current limits, fault code
   and state of health, read every minute.
 - **Firmware versions** as diagnostic sensors: the DSP and ARM internal
-  versions and beta numbers, and the BMS software version. Checking for
-  and installing updates is left to the GoodWe app or SEMS+.
+  versions and beta numbers, and the BMS software version.
+- **Firmware update check.** Once a day, a *Firmware* update entity asks
+  GoodWe whether newer DSP or ARM firmware exists, sending the inverter's
+  serial number and firmware versions as the GoodWe app does. It only
+  checks: install updates with the GoodWe app or ask your installer. This
+  is the only feature that contacts GoodWe; it uses the app's undocumented
+  service, which may stop working. Turn off *Check for firmware updates* in
+  the integration's options to keep everything local.
 - **Signs as Home Assistant expects.** Grid power is positive while
   importing, and battery power positive while discharging.
 - Zeroconf discovery of GoodWe WiFi/LAN dongles (`_goodwe._tcp`).

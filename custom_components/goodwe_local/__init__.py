@@ -13,6 +13,7 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 from .config_flow import GoodweFlowHandler
 from .const import (
     CONF_ALLOW_CONTROL,
+    CONF_CHECK_FIRMWARE,
     CONF_MODEL_FAMILY,
     CONF_SHOW_SETTINGS,
     PLATFORMS,
@@ -20,11 +21,13 @@ from .const import (
 from .coordinator import (
     GoodweBatteryRackCoordinator,
     GoodweConfigEntry,
+    GoodweFirmwareCoordinator,
     GoodweRuntimeData,
     GoodweSettingsCoordinator,
     GoodweUpdateCoordinator,
 )
 from .entity import GoodweDevice, build_devices
+from .firmware import InstalledFirmware
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,6 +66,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         settings = GoodweSettingsCoordinator(hass, entry, inverter)
         await settings.async_config_entry_first_refresh()
     racks = await _async_setup_battery_racks(hass, entry, inverter)
+    firmware = _setup_firmware_check(hass, entry, inverter)
 
     entry.runtime_data = GoodweRuntimeData(
         inverter=inverter,
@@ -70,6 +74,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         settings=settings,
         devices=build_devices(hass, entry, inverter),
         racks=racks,
+        firmware=firmware,
         allow_control=allow_control,
         show_settings=show_settings,
     )
@@ -78,8 +83,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    if firmware is not None:
+        # The check reaches GoodWe's servers, so it mustn't hold up setup
+        entry.async_create_background_task(
+            hass, firmware.async_refresh(), "goodwe_local firmware check"
+        )
 
     return True
+
+
+def _setup_firmware_check(
+    hass: HomeAssistant, entry: GoodweConfigEntry, inverter: Inverter
+) -> GoodweFirmwareCoordinator | None:
+    """Check for firmware updates, unless turned off or the versions are unknown."""
+    if not entry.options.get(CONF_CHECK_FIRMWARE, True):
+        return None
+    if (installed := InstalledFirmware.from_inverter(inverter)) is None:
+        _LOGGER.debug(
+            "Firmware %s / %s has no known version form; not checking for updates",
+            inverter.firmware,
+            inverter.arm_firmware,
+        )
+        return None
+    return GoodweFirmwareCoordinator(hass, entry, inverter, installed)
 
 
 def _async_remove_hidden_entities(
@@ -91,8 +117,13 @@ def _async_remove_hidden_entities(
     entity_registry = er.async_get(hass)
     for entity in er.async_entries_for_config_entry(entity_registry, entry.entry_id):
         key = entity.unique_id.removeprefix(f"{serial}-")
-        if (entity.domain == Platform.SWITCH and not runtime_data.allow_control) or (
-            not runtime_data.show_settings and _is_setting_entity(entity.domain, key)
+        if (
+            (entity.domain == Platform.SWITCH and not runtime_data.allow_control)
+            or (entity.domain == Platform.UPDATE and runtime_data.firmware is None)
+            or (
+                not runtime_data.show_settings
+                and _is_setting_entity(entity.domain, key)
+            )
         ):
             entity_registry.async_remove(entity.entity_id)
     if runtime_data.allow_control or runtime_data.show_settings:

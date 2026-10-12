@@ -46,13 +46,25 @@ the table applies to ET only.
 
 ## Options
 
-Both options are off by default, so a new entry shows readings only.
-*Show stored settings* adds the read-only settings and TOU slot sensors and
-the work mode binary sensors; *Allow controls* adds the switches, after a
-warning that points to SEMS+. The settings area is read only while one of
+The settings and controls options are off by default, so a new entry shows
+readings only. *Show stored settings* adds the read-only settings and TOU
+slot sensors and the work mode binary sensors; *Allow controls* adds the
+switches, after a warning that points to SEMS+. The settings area is read only while one of
 them is on. The inverter's stored settings sync with the cloud only now and
 then, so they are not a source of truth; SEMS+ is the place to see and change
 settings. Turning an option off removes its entities from the registry.
+
+*Check for firmware updates* is on by default. Once a day it posts the
+inverter's serial and DSP/ARM versions to
+`https://solargo.sems.com.cn/api/Solargo/CheckUpgradePlus_v3`, as the SEMS+
+app does before sign-in, with the token built into the app (`firmware.py`).
+The versions are the middle part of the firmware strings (7 from
+`04082-07-S08`), because the library's `dsp1_version`/`arm_version` read 1 on
+the EHA; inverters whose strings have another form aren't checked. An empty
+answer means up to date; asking with an older ARM version returned the
+installed ARM firmware, so the check does report releases. The endpoint is
+undocumented and may change; a failed check leaves the entity unavailable.
+Nothing is ever installed from here.
 
 ## Writes
 

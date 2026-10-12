@@ -12,6 +12,7 @@ PLATFORMS = [
     Platform.BINARY_SENSOR,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.UPDATE,
 ]
 
 DEFAULT_NAME = "GoodWe"
@@ -21,10 +22,12 @@ SCAN_INTERVAL = timedelta(seconds=10)
 SETTINGS_SCAN_INTERVAL = timedelta(minutes=5)
 # Six racks are six requests, so they are read less often than the runtime data
 BATTERY_RACK_SCAN_INTERVAL = timedelta(seconds=60)
+FIRMWARE_CHECK_INTERVAL = timedelta(days=1)
 
 CONF_MODEL_FAMILY = "model_family"
 CONF_ALLOW_CONTROL = "allow_control"
 CONF_SHOW_SETTINGS = "show_settings"
+CONF_CHECK_FIRMWARE = "check_firmware"
 
 MODE_TO_OPTION: dict[OperationMode, str] = {
     OperationMode.GENERAL: "general",

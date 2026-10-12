@@ -19,6 +19,7 @@ from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
 from .const import (
     CONF_ALLOW_CONTROL,
+    CONF_CHECK_FIRMWARE,
     CONF_MODEL_FAMILY,
     CONF_SHOW_SETTINGS,
     DEFAULT_NAME,
@@ -34,6 +35,7 @@ CONFIG_SCHEMA = vol.Schema(
 OPTIONS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_SHOW_SETTINGS, default=False): bool,
+        vol.Required(CONF_CHECK_FIRMWARE, default=True): bool,
         vol.Required(CONF_ALLOW_CONTROL, default=False): bool,
     }
 )

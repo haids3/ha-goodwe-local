@@ -15,11 +15,23 @@ from goodwe import (
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import BATTERY_RACK_SCAN_INTERVAL, SCAN_INTERVAL, SETTINGS_SCAN_INTERVAL
+from .const import (
+    BATTERY_RACK_SCAN_INTERVAL,
+    FIRMWARE_CHECK_INTERVAL,
+    SCAN_INTERVAL,
+    SETTINGS_SCAN_INTERVAL,
+)
 from .entity import GoodweDevice
+from .firmware import (
+    FirmwareCheckError,
+    FirmwareRelease,
+    InstalledFirmware,
+    async_check_firmware,
+)
 from .tou import async_read_tou_slots
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,6 +49,7 @@ class GoodweRuntimeData:
     settings: GoodweSettingsCoordinator | None
     devices: dict[GoodweDevice, DeviceInfo]
     racks: GoodweBatteryRackCoordinator | None
+    firmware: GoodweFirmwareCoordinator | None
     allow_control: bool
     show_settings: bool
 
@@ -222,3 +235,37 @@ class GoodweBatteryRackCoordinator(DataUpdateCoordinator[dict[int, BatteryCluste
         except InverterError as err:
             raise UpdateFailed(err) from err
         return {rack.index: rack for rack in racks}
+
+
+class GoodweFirmwareCoordinator(DataUpdateCoordinator[list[FirmwareRelease]]):
+    """Ask GoodWe once a day whether newer inverter firmware exists."""
+
+    config_entry: GoodweConfigEntry
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: GoodweConfigEntry,
+        inverter: Inverter,
+        installed: InstalledFirmware,
+    ) -> None:
+        """Initialize the firmware coordinator."""
+        super().__init__(
+            hass,
+            _LOGGER,
+            config_entry=entry,
+            name=f"{entry.title} firmware",
+            update_interval=FIRMWARE_CHECK_INTERVAL,
+        )
+        self.serial: str = inverter.serial_number
+        self.installed = installed
+
+    @override
+    async def _async_update_data(self) -> list[FirmwareRelease]:
+        """Check for newer firmware."""
+        try:
+            return await async_check_firmware(
+                async_get_clientsession(self.hass), self.serial, self.installed
+            )
+        except FirmwareCheckError as err:
+            raise UpdateFailed(err) from err
