@@ -100,6 +100,14 @@ smart charge (off 5). The library looks for 3 or -4, so it can't find an off
 peak shaving group: turning the switch on raises an error and writes
 nothing.
 
+The portal's toggle writes 252 (on) or 3 (off), like 250/5 for smart charge,
+and it recognises a group as peak shaving only by 252 or 3. Saving the
+settings left the byte at 0, and with TOU on the portal doesn't let peak
+shaving be switched, so 0 most likely means "set up, never switched". Not yet
+tested: turning TOU off and switching peak shaving on then off should read 0,
+then 252, then 3. A group at 0 can't be told from an empty TOU-style group,
+so leave it alone.
+
 ## CI
 
 Lint and Test run on every push to `main`. Validate (manual) runs HACS,
