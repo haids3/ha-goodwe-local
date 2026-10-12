@@ -652,6 +652,13 @@
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       True,
     ),
+    'sensor.mock_title_operation_mode_code': tuple(
+      'Mock Title',
+      None,
+      None,
+      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+      False,
+    ),
     'sensor.mock_title_phase_1_apparent_power': tuple(
       'Mock Title',
       None,
@@ -1547,13 +1554,6 @@
       None,
       <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
       True,
-    ),
-    'sensor.mock_title_work_mode_running_mode_code': tuple(
-      'Mock Title Work mode',
-      None,
-      None,
-      <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
-      False,
     ),
   })
 # ---

@@ -238,7 +238,8 @@ ET_SENSORS: dict[str, SensorSpec] = {
     "safety_country": _hidden("safety_country_code"),
     "safety_country_label": _hidden("safety_country"),
     "timestamp": _hidden("inverter_clock"),
-    "operation_mode": _hidden("running_mode_code", WORK_MODE),
+    # Not the running mode: stays put while SEMS+ shows self-use and TOU
+    "operation_mode": _hidden("operation_mode_code"),
     # Battery
     "pbattery1": _main("battery_power", BATTERY),
     "battery_soc": _main("state_of_charge", BATTERY),

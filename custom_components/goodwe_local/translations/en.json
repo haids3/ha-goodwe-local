@@ -327,6 +327,9 @@
           "peak_shaving": "Peak shaving mode"
         }
       },
+      "operation_mode_code": {
+        "name": "Operation mode code"
+      },
       "phase_ac_current": {
         "name": "Phase {phase} AC current"
       },
@@ -424,9 +427,6 @@
       },
       "reactive_power": {
         "name": "Reactive power"
-      },
-      "running_mode_code": {
-        "name": "Running mode code"
       },
       "safety_country": {
         "name": "Safety country"
