@@ -51,9 +51,10 @@ bit and NUL-padded model names.
   disabled. Other families keep the library's names, with the main sensors
   shown.
 - **Battery racks.** Batteries built from racks (BMS clusters), such as the
-  All-in-One, get a device per rack with its state of charge, power,
-  current, voltage, temperatures, cell voltages, current limits, fault code
-  and state of health, read every minute.
+  All-in-One, get a device per rack with its status (as the GoodWe app
+  shows it: running, standby, sleeping, fault and so on), state of charge,
+  power, current, voltage, temperatures, cell voltages, current limits,
+  fault code and state of health, read every minute.
 - **Firmware versions** as diagnostic sensors: the DSP and ARM internal
   versions and beta numbers, and the BMS software version.
 - **Firmware update check.** Once a day, a *Firmware* update entity asks

@@ -90,6 +90,12 @@
           <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
           True,
         ),
+        'sensor.mock_title_battery_rack_1_status': tuple(
+          'running',
+          None,
+          None,
+          True,
+        ),
         'sensor.mock_title_battery_rack_1_status_code': tuple(
           None,
           None,
@@ -191,6 +197,12 @@
           '98.5',
           '%',
           <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+          True,
+        ),
+        'sensor.mock_title_battery_rack_2_status': tuple(
+          'running',
+          None,
+          None,
           True,
         ),
         'sensor.mock_title_battery_rack_2_status_code': tuple(

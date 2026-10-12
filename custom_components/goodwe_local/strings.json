@@ -425,6 +425,19 @@
       "pv_string_voltage": {
         "name": "PV{string} voltage"
       },
+      "rack_status": {
+        "name": "Status",
+        "state": {
+          "available": "Available",
+          "fault": "Fault",
+          "initializing": "Initializing",
+          "powered_off": "Powered off",
+          "running": "Running",
+          "sleeping": "Sleeping",
+          "standby": "Standby",
+          "upgrading": "Upgrading"
+        }
+      },
       "reactive_power": {
         "name": "Reactive power"
       },

@@ -711,6 +711,19 @@ class BatteryRackSensorEntityDescription(SensorEntityDescription):
     value: Callable[[BatteryCluster], StateType]
 
 
+# 23000 + 32 * (rack - 1), labelled as the GoodWe app labels it
+_RACK_STATUS = {
+    0: "initializing",
+    1: "available",
+    2: "standby",
+    3: "running",
+    4: "sleeping",
+    5: "powered_off",
+    6: "fault",
+    7: "upgrading",
+}
+
+
 def _rack_power(rack: BatteryCluster) -> int:
     # Positive while discharging, like the battery's power
     return round(rack.voltage * rack.current)
@@ -732,6 +745,13 @@ RACK_SENSORS = (
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfPower.WATT,
         value=_rack_power,
+    ),
+    BatteryRackSensorEntityDescription(
+        key="status",
+        translation_key="rack_status",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(_RACK_STATUS.values()),
+        value=lambda rack: _RACK_STATUS.get(rack.status),
     ),
     BatteryRackSensorEntityDescription(
         key="current",
@@ -811,7 +831,7 @@ RACK_SENSORS = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value=lambda rack: rack.fault,
     ),
-    # The codes' meanings are not documented
+    # The raw code behind the status
     BatteryRackSensorEntityDescription(
         key="status_code",
         translation_key="status_code",

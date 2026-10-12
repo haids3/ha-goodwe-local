@@ -42,10 +42,10 @@ INFO = [
 ]
 
 
-def _rack(index: int, current: float) -> BatteryCluster:
+def _rack(index: int, current: float, status: int = 3) -> BatteryCluster:
     return BatteryCluster(
         index=index,
-        status=3,
+        status=status,
         fault=0,
         soc=88.1,
         current=current,
@@ -110,6 +110,35 @@ async def test_racks(
             sensors,
         )
     assert racks == snapshot
+
+
+@pytest.mark.parametrize(
+    ("code", "state"),
+    [
+        (0, "initializing"),
+        (1, "available"),
+        (2, "standby"),
+        (3, "running"),
+        (4, "sleeping"),
+        (5, "powered_off"),
+        (6, "fault"),
+        (7, "upgrading"),
+        pytest.param(99, "unknown", id="undocumented"),
+    ],
+)
+async def test_rack_status(
+    hass: HomeAssistant,
+    rack_inverter: MagicMock,
+    config_entry: MockConfigEntry,
+    code: int,
+    state: str,
+) -> None:
+    """Test the rack status code shows as the GoodWe app labels it."""
+    rack_inverter.read_battery_clusters.return_value = [_rack(1, -13.72, status=code)]
+
+    await setup_integration(hass, config_entry, [Platform.SENSOR])
+
+    assert hass.states.get("sensor.mock_title_battery_rack_1_status").state == state
 
 
 async def test_rack_stops_reporting(
