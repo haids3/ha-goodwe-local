@@ -64,8 +64,10 @@ or the app validate those before they reach the inverter, a Modbus write
 does not.
 
 Verified on a work mode 3.0 EHA (2026-10-12): TOU slot on/off, TOU mode and
-backup mode; each acts at once. Smart charge and peak shaving are untested,
-because the shared group (47589) must already hold their schedule. The
+backup mode; each acts at once. Smart charge on, with its schedule in the
+second shared group (47834), reached SEMS+ with the usual sync lag. Turning
+smart charge off and peak shaving are untested; they need a schedule already
+in one of the shared groups (47589 or 47834). The
 inverter can read a backup write back a moment late, so a switch shows what
 it wrote until a read agrees, or until a read 30 seconds later.
 

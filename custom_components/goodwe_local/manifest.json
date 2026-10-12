@@ -12,6 +12,6 @@
   "requirements": [
     "goodwe @ git+https://github.com/haids3/goodwe.git@c850228"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "zeroconf": ["_goodwe._tcp.local."]
 }
