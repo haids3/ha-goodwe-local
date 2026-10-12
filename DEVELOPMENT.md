@@ -84,10 +84,21 @@ inverter. A group with no days, or on/off byte 85 (not set), counts as empty.
 Verified on a work mode 3.0 EHA (2026-10-12): TOU slot on/off, TOU mode and
 backup mode; each acts at once. Smart charge on and off, with its schedule in
 the second shared group (47834), switched the inverter at once and reached
-SEMS+ with the usual sync lag. Peak shaving is untested; it needs a schedule
-already in one of the shared groups (47589 or 47834). The inverter can read a
-backup write back a moment late, so a switch shows what it wrote until a read
-agrees, or until a read 30 seconds later.
+SEMS+ with the usual sync lag. The inverter can read a backup write back a
+moment late, so a switch shows what it wrote until a read agrees, or until a
+read 30 seconds later.
+
+Slots 5-8 were set up in the portal (2026-10-12) and read back at 47571,
+47577, 47583 and 47840, confirming the layout above.
+
+Peak shaving is untested and its switch doesn't work yet. Set up in the
+portal but left off (2026-10-12), it landed in 47589 as `0c00 0f00 007f 0005
+000a 0000`: 12:00-15:00, every day, on/off byte **0**, max import power 5
+(whole kW, not the library's 10 W steps) and reserve SOC 10 %. The portal
+code writes 252 (-4) for on, so off is 0 rather than the type (3), unlike
+smart charge (off 5). The library looks for 3 or -4, so it can't find an off
+peak shaving group: turning the switch on raises an error and writes
+nothing.
 
 ## CI
 
