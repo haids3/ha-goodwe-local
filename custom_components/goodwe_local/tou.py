@@ -7,6 +7,8 @@ from goodwe import Inverter
 from goodwe.sensor import Schedule, ScheduleType
 
 TOU_SLOTS = 4
+# Work mode 3.0 firmware has 8, like the SEMS portal shows
+TOU_SLOTS_V3 = 8
 
 _WEEKDAYS = ("sun", "mon", "tue", "wed", "thu", "fri", "sat")
 _ALL_MONTHS = 0x0FFF
@@ -17,7 +19,7 @@ class TouSlot:
     """One eco mode group as the GoodWe apps show it."""
 
     index: int
-    # Unused groups hold 48 (0x30) as their hours
+    # Unused groups hold 48 (0x30) as their hours, or no days at all
     configured: bool
     enabled: bool
     charging: bool
@@ -34,7 +36,12 @@ class TouSlot:
     @classmethod
     def from_schedule(cls, index: int, schedule: Schedule) -> Self:
         """Convert the library's group, which it reuses for every read."""
-        configured = 0 <= schedule.start_h <= 23 and 0 <= schedule.end_h <= 23
+        configured = (
+            0 <= schedule.start_h <= 23
+            and 0 <= schedule.end_h <= 23
+            and schedule.day_bits & 0x7F != 0
+            and schedule.schedule_type is not ScheduleType.NOT_SET
+        )
         power = schedule.get_power()
         return cls(
             index=index,
@@ -98,8 +105,9 @@ async def async_set_tou_slot(inverter: Inverter, index: int, enabled: bool) -> N
 
 async def async_read_tou_slots(inverter: Inverter) -> dict[int, TouSlot]:
     """Read the eco mode groups; older firmware has no slots in this form."""
+    count = TOU_SLOTS_V3 if getattr(inverter, "has_work_mode_v3", False) else TOU_SLOTS
     slots: dict[int, TouSlot] = {}
-    for index in range(1, TOU_SLOTS + 1):
+    for index in range(1, count + 1):
         schedule = await inverter.read_setting(f"eco_mode_{index}")
         if not isinstance(schedule, Schedule):
             raise ValueError("Eco mode groups without SOC and months")

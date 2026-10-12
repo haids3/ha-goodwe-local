@@ -111,6 +111,60 @@ async def test_tou_slot_fields(
     assert fields == snapshot
 
 
+@pytest.mark.parametrize(
+    ("has_work_mode_v3", "expected"),
+    [
+        pytest.param(False, {1: True, 2: True, 3: False, 4: True}, id="four_slots"),
+        pytest.param(
+            True,
+            {
+                1: True,
+                2: True,
+                3: False,
+                4: True,
+                5: False,
+                6: False,
+                7: True,
+                8: False,
+            },
+            id="work_mode_v3",
+        ),
+    ],
+)
+async def test_work_mode_v3_slots(
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    tou_inverter: MagicMock,
+    slots: dict[int, str],
+    config_entry: MockConfigEntry,
+    has_work_mode_v3: bool,
+    expected: dict[int, bool],
+) -> None:
+    """Test work mode 3.0 has 8 slots, and empty groups start disabled."""
+    tou_inverter.has_work_mode_v3 = has_work_mode_v3
+    slots.update(
+        {
+            # As read from a work mode 3.0 EHA that never used these groups
+            5: "000000005500000000000000",
+            6: "000000000000000000000000",
+            # Discharge at 50% down to 30% SOC every day, 08:00 to 10:00, on
+            7: "08000a00f97f01f4001e0fff",
+            8: "000000000000000000000000",
+        }
+    )
+
+    await setup_integration(hass, config_entry, [Platform.SENSOR])
+
+    enabled = {}
+    for index in range(1, 9):
+        entry = entity_registry.async_get(
+            f"sensor.mock_title_work_mode_tou_slot_{index}_status"
+        )
+        if entry is not None:
+            enabled[index] = entry.disabled_by is None
+    assert enabled == expected
+
+
 async def test_eco_mode_v1(
     hass: HomeAssistant,
     mock_inverter: MagicMock,

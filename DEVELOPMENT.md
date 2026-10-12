@@ -63,13 +63,19 @@ read-only here. Don't add numbers, selects, times or schedule writes; SEMS+
 or the app validate those before they reach the inverter, a Modbus write
 does not.
 
+Work mode 3.0 has 8 TOU slots, other firmware 4. Following the SEMS web
+portal, slots 1-7 are the groups at 47547 + 6 * (n - 1) and slot 8 is at
+47840, after the two groups peak shaving and smart charge share (47589 and
+47834). Slots 5-8 are read live, but have never held a schedule on the test
+inverter. A group with no days, or on/off byte 85 (not set), counts as empty.
+
 Verified on a work mode 3.0 EHA (2026-10-12): TOU slot on/off, TOU mode and
-backup mode; each acts at once. Smart charge on, with its schedule in the
-second shared group (47834), reached SEMS+ with the usual sync lag. Turning
-smart charge off and peak shaving are untested; they need a schedule already
-in one of the shared groups (47589 or 47834). The
-inverter can read a backup write back a moment late, so a switch shows what
-it wrote until a read agrees, or until a read 30 seconds later.
+backup mode; each acts at once. Smart charge on and off, with its schedule in
+the second shared group (47834), switched the inverter at once and reached
+SEMS+ with the usual sync lag. Peak shaving is untested; it needs a schedule
+already in one of the shared groups (47589 or 47834). The inverter can read a
+backup write back a moment late, so a switch shows what it wrote until a read
+agrees, or until a read 30 seconds later.
 
 ## CI
 
