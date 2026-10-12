@@ -8,6 +8,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from syrupy.assertion import SnapshotAssertion
 
 from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import entity_registry as er
 
 from custom_components.goodwe_local.const import CONF_ALLOW_CONTROL, PLATFORMS
@@ -71,12 +72,45 @@ async def test_allow_control_option(
     assert hass.states.get(SWITCH_ENTITY_ID) is None
 
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
-    await hass.config_entries.options.async_configure(
+    result = await hass.config_entries.options.async_configure(
         result["flow_id"], {CONF_ALLOW_CONTROL: True}
     )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "confirm_control"
+    # Nothing changes until the warning is accepted
+    assert config_entry.options == {CONF_ALLOW_CONTROL: False}
+
+    await hass.config_entries.options.async_configure(result["flow_id"], {})
     await hass.async_block_till_done()
 
     assert config_entry.options == {CONF_ALLOW_CONTROL: True}
     assert hass.states.get(SWITCH_ENTITY_ID)
     # The read-only view stays, so turning controls on or off removes nothing
     assert hass.states.get("binary_sensor.mock_title_work_mode_tou_mode")
+
+
+@pytest.mark.parametrize(
+    ("allow_control", "user_input"),
+    [
+        pytest.param(True, {CONF_ALLOW_CONTROL: True}, id="keep_on"),
+        pytest.param(True, {CONF_ALLOW_CONTROL: False}, id="turn_off"),
+        pytest.param(False, {CONF_ALLOW_CONTROL: False}, id="keep_off"),
+    ],
+)
+@pytest.mark.usefixtures("mock_switches")
+async def test_options_without_warning(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    user_input: dict[str, bool],
+) -> None:
+    """Test only turning controls on asks for confirmation."""
+    await setup_integration(hass, config_entry, PLATFORMS)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input
+    )
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert config_entry.options == user_input

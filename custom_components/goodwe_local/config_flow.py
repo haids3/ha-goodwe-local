@@ -169,11 +169,18 @@ class GoodweFlowHandler(ConfigFlow, domain=DOMAIN):
 class GoodweOptionsFlow(OptionsFlow):
     """Handle GoodWe options."""
 
+    _options: dict[str, Any]
+
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
+            if user_input[CONF_ALLOW_CONTROL] and not self.config_entry.options.get(
+                CONF_ALLOW_CONTROL, False
+            ):
+                self._options = user_input
+                return await self.async_step_confirm_control()
             return self.async_create_entry(data=user_input)
         return self.async_show_form(
             step_id="init",
@@ -181,3 +188,11 @@ class GoodweOptionsFlow(OptionsFlow):
                 OPTIONS_SCHEMA, self.config_entry.options
             ),
         )
+
+    async def async_step_confirm_control(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Warn before allowing controls."""
+        if user_input is not None:
+            return self.async_create_entry(data=self._options)
+        return self.async_show_form(step_id="confirm_control")

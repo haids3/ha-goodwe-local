@@ -558,9 +558,13 @@
           "allow_control": "Allow controls"
         },
         "data_description": {
-          "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Values such as the export limit and the TOU schedule stay read-only here; change them in the GoodWe app or through SEMS+, which check them first."
+          "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Not recommended: use the SEMS+ integration for control instead."
         },
         "title": "GoodWe options"
+      },
+      "confirm_control": {
+        "description": "Changes made here act on the inverter at once, but reach the GoodWe app and SEMS portal only after minutes to over an hour, and changes made there reach the inverter's stored settings, and so these switches, just as slowly. In the meantime the app, the portal and Home Assistant can show different settings, and a change in one can undo a change in another.\n\nTo keep them in sync, control the inverter with the [SEMS+ integration](https://github.com/haids3/ha-sems-plus) and use GoodWe Local for fast readings only.\n\nAllow controls anyway?",
+        "title": "Allow local controls?"
       }
     }
   }
