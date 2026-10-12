@@ -83,11 +83,13 @@ async def test_racks(
     """Test each rack is a device under the battery with its readings."""
     await setup_integration(hass, config_entry, [Platform.SENSOR])
 
-    battery = device_registry.async_get_device({(DOMAIN, f"{TEST_SERIAL}-battery")})
+    battery = device_registry.async_get_device_by_identifier(
+        (DOMAIN, f"{TEST_SERIAL}-battery"), config_entry.entry_id
+    )
     racks = {}
     for index in (1, 2):
-        device = device_registry.async_get_device(
-            {(DOMAIN, f"{TEST_SERIAL}-battery_rack_{index}")}
+        device = device_registry.async_get_device_by_identifier(
+            (DOMAIN, f"{TEST_SERIAL}-battery_rack_{index}"), config_entry.entry_id
         )
         assert device.via_device_id == battery.id
         sensors = {}
@@ -171,7 +173,9 @@ async def test_no_racks(
     await setup_integration(hass, config_entry, [Platform.SENSOR])
 
     assert (
-        device_registry.async_get_device({(DOMAIN, f"{TEST_SERIAL}-battery_rack_1")})
+        device_registry.async_get_device_by_identifier(
+            (DOMAIN, f"{TEST_SERIAL}-battery_rack_1"), config_entry.entry_id
+        )
         is None
     )
     mock_inverter.read_battery_clusters.assert_not_awaited()

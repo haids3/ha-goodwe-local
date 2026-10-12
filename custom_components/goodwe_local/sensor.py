@@ -29,6 +29,7 @@ from homeassistant.const import (
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_point_in_time
@@ -255,8 +256,14 @@ async def async_setup_entry(
         for description in FIRMWARE_SENSORS
     )
     if (racks := config_entry.runtime_data.racks) is not None:
+        # Racks link to the battery by registry id, so it must exist first
+        battery_device = dr.async_get(hass).async_get_or_create(
+            config_entry_id=config_entry.entry_id, **devices[GoodweDevice.BATTERY]
+        )
         for index, info in racks.info.items():
-            device_info = rack_device_info(config_entry, inverter, info)
+            device_info = rack_device_info(
+                config_entry, inverter, info, battery_device.id
+            )
             entities.extend(
                 BatteryRackSensor(racks, device_info, inverter, index, description)
                 for description in RACK_SENSORS

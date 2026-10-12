@@ -56,7 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoodweConfigEntry) -> bo
         inverter=inverter,
         coordinator=coordinator,
         settings=settings,
-        devices=build_devices(entry, inverter),
+        devices=build_devices(hass, entry, inverter),
         racks=racks,
         # Controls write to real hardware, so they are opt-in
         allow_control=entry.options.get(CONF_ALLOW_CONTROL, False),
