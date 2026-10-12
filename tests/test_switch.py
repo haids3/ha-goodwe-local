@@ -32,6 +32,7 @@ from homeassistant.helpers import entity_registry as er
 from .conftest import setup_integration
 
 TOU_ENTITY_ID = "switch.mock_title_work_mode_tou_mode"
+BACKUP_ENTITY_ID = "switch.mock_title_work_mode_backup_mode"
 PEAK_SHAVING_ENTITY_ID = "switch.mock_title_work_mode_peak_shaving_mode"
 
 
@@ -119,6 +120,42 @@ async def test_turn_on_off(
 
     mock_switches.set_work_mode_switch.assert_awaited_once_with(switch, enabled)
     assert hass.states.get(entity_id).state == expected_state
+
+
+@pytest.mark.parametrize(
+    ("applied", "expected_state"),
+    [
+        pytest.param(True, STATE_ON, id="applied_late"),
+        pytest.param(False, STATE_OFF, id="never_applied"),
+    ],
+)
+async def test_turn_on_read_back_stale(
+    hass: HomeAssistant,
+    mock_switches: MagicMock,
+    config_entry: MockConfigEntry,
+    freezer: FrozenDateTimeFactory,
+    applied: bool,
+    expected_state: str,
+) -> None:
+    """Test the written state holds while the read after the write is stale."""
+    await _setup(hass, config_entry)
+    switches = mock_switches.get_work_mode_switches.return_value
+    # The inverter acknowledges the write but still reads the old value
+    mock_switches.set_work_mode_switch.side_effect = None
+
+    await hass.services.async_call(
+        SWITCH_DOMAIN,
+        SERVICE_TURN_ON,
+        {ATTR_ENTITY_ID: BACKUP_ENTITY_ID},
+        blocking=True,
+    )
+    assert hass.states.get(BACKUP_ENTITY_ID).state == STATE_ON
+
+    switches[WorkModeSwitch.BACKUP] = applied
+    freezer.tick(timedelta(seconds=30))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert hass.states.get(BACKUP_ENTITY_ID).state == expected_state
 
 
 async def test_turn_on_rejected(
