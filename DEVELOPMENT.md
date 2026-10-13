@@ -49,10 +49,11 @@ the table applies to ET only.
 The settings and controls options are off by default, so a new entry shows
 readings only. *Show stored settings* adds the read-only settings and TOU
 slot sensors and the work mode binary sensors; *Allow controls* adds the
-switches, after a warning that points to SEMS+. The settings area is read only while one of
-them is on. The inverter's stored settings sync with the cloud only now and
-then, so they are not a source of truth; SEMS+ is the place to see and change
-settings. Turning an option off removes its entities from the registry.
+switches, after a warning that points to SEMS+. The settings area is read
+only while one of them is on. The inverter's stored settings sync with the
+cloud only about hourly, so they are not a source of truth; SEMS+ is the
+place to see and change settings. Turning an option off removes its entities
+from the registry.
 
 *Check for firmware updates* is on by default. Once a day it posts the
 inverter's serial and DSP/ARM versions to
@@ -101,8 +102,8 @@ least once; a group still at 0 can't be told from an empty TOU-style group,
 so the library leaves it alone and the switch raises an error.
 
 Settings sync between the inverter and the cloud in one batch, both ways,
-about once an hour at a fixed minute (21 past on the test inverter), which
-explains delays from a couple of minutes to over an hour.
+roughly once an hour (the minute past the hour has varied on the test
+inverter), which explains delays from a couple of minutes to about an hour.
 
 ## CI
 

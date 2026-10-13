@@ -19,7 +19,7 @@ bit and NUL-padded model names.
   see or change settings, use the
   [SEMS+ integration](https://github.com/haids3/ha-sems-plus), which keeps
   the GoodWe app, the SEMS portal and Home Assistant in sync. The inverter's
-  own copy of its settings syncs with the cloud only now and then (see
+  own copy of its settings syncs with the cloud only about hourly (see
   below), so it is no source of truth for automations.
 - **Stored settings, read-only, when asked for.** Turning on *Show stored
   settings* in the integration's options adds read-only sensors for the
@@ -36,8 +36,8 @@ bit and NUL-padded model names.
 - **Changes act at once; stored settings sync slowly.** A switch here, in the
   GoodWe app or in SEMS+ takes effect on the inverter straight away. The
   stored settings sync between the inverter and the cloud in one batch,
-  both ways, about once an hour at a fixed minute, so a change can take
-  anything from a few minutes to an hour to show on the other side. Until
+  both ways, roughly once an hour, so a change can take anything from a few
+  minutes to about an hour to show on the other side. Until
   then the stored settings and switches here can show the old values after
   a change in the app or SEMS+, and SEMS+ can lag changes made here the
   same way. A switch shows the state it wrote for up to 30 seconds, since

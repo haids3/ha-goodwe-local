@@ -580,12 +580,12 @@
         "data_description": {
           "allow_control": "Create switches that turn the inverter's work modes and existing TOU slots on or off. Not recommended: use the SEMS+ integration for control instead.",
           "check_firmware": "Once a day, send the inverter's serial number and firmware versions to GoodWe to ask whether newer firmware exists, as the GoodWe app does. This is the only feature that contacts GoodWe; it uses an undocumented service that may stop working. Updates are installed with the GoodWe app or by your installer.",
-          "show_settings": "Show the work modes, TOU slots, export limit and other settings as read-only sensors. The inverter's stored copy can lag changes made in the GoodWe app or SEMS portal by minutes to over an hour, so don't rely on these in automations; the SEMS+ integration shows the settings the cloud holds."
+          "show_settings": "Show the work modes, TOU slots, export limit and other settings as read-only sensors. The inverter's stored settings sync with the GoodWe cloud only about once an hour, so they can lag changes made in the GoodWe app or SEMS portal by up to an hour; don't rely on them in automations. The SEMS+ integration shows the settings the cloud holds."
         },
         "title": "GoodWe options"
       },
       "confirm_control": {
-        "description": "Changes made here act on the inverter at once, but reach the GoodWe app and SEMS portal only after minutes to over an hour, and changes made there reach the inverter's stored settings, and so these switches, just as slowly. In the meantime the app, the portal and Home Assistant can show different settings, and a change in one can undo a change in another.\n\nTo keep them in sync, control the inverter with the [SEMS+ integration](https://github.com/haids3/ha-sems-plus) and use GoodWe Local for fast readings only.\n\nAllow controls anyway?",
+        "description": "Changes made here act on the inverter at once, but the inverter and the GoodWe cloud sync settings only about once an hour. Until then, changes made here don't show in the GoodWe app and SEMS portal, and changes made there don't show in the inverter's stored settings, or these switches. In the meantime the app, the portal and Home Assistant can show different settings, and a change in one can undo a change in another.\n\nTo keep them in sync, control the inverter with the [SEMS+ integration](https://github.com/haids3/ha-sems-plus) and use GoodWe Local for fast readings only.\n\nAllow controls anyway?",
         "title": "Allow local controls?"
       }
     }
