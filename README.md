@@ -35,12 +35,13 @@ bit and NUL-padded model names.
   Turning either option off removes its entities.
 - **Changes act at once; stored settings sync slowly.** A switch here, in the
   GoodWe app or in SEMS+ takes effect on the inverter straight away. The
-  stored settings sync between the inverter and the cloud only now and then,
-  with delays from a few minutes to over an hour. After a change in the app
-  or SEMS+, the stored settings and switches here can show the old
-  values for a while, and SEMS+ can lag changes made here the same way. A
-  switch shows the state it wrote for up to 30 seconds, since the inverter
-  can take a moment to read it back.
+  stored settings sync between the inverter and the cloud in one batch,
+  both ways, about once an hour at a fixed minute, so a change can take
+  anything from a few minutes to an hour to show on the other side. Until
+  then the stored settings and switches here can show the old values after
+  a change in the app or SEMS+, and SEMS+ can lag changes made here the
+  same way. A switch shows the state it wrote for up to 30 seconds, since
+  the inverter can take a moment to read it back.
 - **Devices like the GoodWe apps.** The inverter carries power flow, status,
   grid connection and PV strings; the battery, smart meter and work modes are
   devices of their own, connected via the inverter.

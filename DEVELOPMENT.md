@@ -91,22 +91,18 @@ read 30 seconds later.
 Slots 5-8 were set up in the portal (2026-10-12) and read back at 47571,
 47577, 47583 and 47840, confirming the layout above.
 
-Peak shaving is untested and its switch doesn't work yet. Set up in the
-portal but left off (2026-10-12), it landed in 47589 as `0c00 0f00 007f 0005
-000a 0000`: 12:00-15:00, every day, on/off byte **0**, max import power 5
-(whole kW, not the library's 10 W steps) and reserve SOC 10 %. The portal
-code writes 252 (-4) for on, so off is 0 rather than the type (3), unlike
-smart charge (off 5). The library looks for 3 or -4, so it can't find an off
-peak shaving group: turning the switch on raises an error and writes
-nothing.
+Peak shaving, tested through the portal on the test inverter (2026-10-12/13):
+47589's on/off byte read 0 after the settings were first saved, 252 (-4)
+once switched on, and 3 once switched off, as the portal's code writes.
+The power word is in 10 W steps, as the library decodes it (10 kW read
+1000, 3 kW read 300); the 5 read before the first switch was a leftover.
+So the switch works once peak shaving has been switched in the portal at
+least once; a group still at 0 can't be told from an empty TOU-style group,
+so the library leaves it alone and the switch raises an error.
 
-The portal's toggle writes 252 (on) or 3 (off), like 250/5 for smart charge,
-and it recognises a group as peak shaving only by 252 or 3. Saving the
-settings left the byte at 0, and with TOU on the portal doesn't let peak
-shaving be switched, so 0 most likely means "set up, never switched". Not yet
-tested: turning TOU off and switching peak shaving on then off should read 0,
-then 252, then 3. A group at 0 can't be told from an empty TOU-style group,
-so leave it alone.
+Settings sync between the inverter and the cloud in one batch, both ways,
+about once an hour at a fixed minute (21 past on the test inverter), which
+explains delays from a couple of minutes to over an hour.
 
 ## CI
 
